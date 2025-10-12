@@ -6,6 +6,10 @@ bitcoin>=1.1.42
 base58>=2.1.1
 secp256k1>=0.14.0
 
+# Bitcoin Cryptography Dependencies
+ripemd160>=0.0.1
+bech32>=2.0.0
+
 # GPU acceleration (Legendary Performance)
 cupy>=12.0.0
 pyopencl>=2022.1

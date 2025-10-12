@@ -31,10 +31,16 @@ import numpy as np
 from puzzle_data import BITCOIN_PUZZLES, get_brainwallet_patterns, hex_range_to_int_range
 from gpu_acceleration import GPUAccelerationManager, GPUConfig, GPUPerformanceMetrics
 from brainwallet_patterns import BrainwalletPatternLibrary, BrainwalletPattern, PatternMatch
+from bitcoin_cryptography import BitcoinCryptography, BitcoinAddress, CryptographyError
+from error_handling import (
+    KeyHoundLogger, KeyHoundError, CryptographyError as KeyHoundCryptographyError,
+    GPUError, PuzzleError, BrainwalletError, ConfigurationError,
+    error_handler, performance_monitor
+)
 
 # Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-logger = logging.getLogger(__name__)
+keyhound_logger = KeyHoundLogger("KeyHoundEnhanced", log_level="INFO")
+logger = keyhound_logger.logger
 
 # Initialize colorama for cross-platform colored output
 colorama.init()
@@ -90,10 +96,18 @@ class KeyHoundEnhanced:
         # Initialize brainwallet pattern library
         try:
             self.pattern_library = BrainwalletPatternLibrary()
-            logger.info(f"Brainwallet pattern library loaded with {len(self.pattern_library.patterns)} patterns")
+            keyhound_logger.info(f"Brainwallet pattern library loaded with {len(self.pattern_library.patterns)} patterns")
         except Exception as e:
-            logger.error(f"Failed to initialize pattern library: {e}")
+            keyhound_logger.log_error(e)
             self.pattern_library = None
+        
+        # Initialize Bitcoin cryptography
+        try:
+            self.bitcoin_crypto = BitcoinCryptography()
+            keyhound_logger.info("Bitcoin cryptography module initialized successfully")
+        except Exception as e:
+            keyhound_logger.log_error(e)
+            self.bitcoin_crypto = None
         
         # Print initialization status
         print(f"{Fore.CYAN}KeyHound Enhanced - Comprehensive Bitcoin Cryptographic Tool{Style.RESET_ALL}")
@@ -111,6 +125,8 @@ class KeyHoundEnhanced:
             print(f"{Fore.GREEN}Brainwallet patterns loaded: {stats['total_patterns']} patterns{Style.RESET_ALL}")
             print(f"{Fore.GREEN}Languages: {stats['languages']}, Categories: {stats['categories']}{Style.RESET_ALL}")
     
+    @error_handler(keyhound_logger)
+    @performance_monitor(keyhound_logger)
     def solve_bitcoin_puzzle(self, puzzle_id: int) -> Optional[str]:
         """
         Solve a specific Bitcoin puzzle challenge.
@@ -218,6 +234,8 @@ class KeyHoundEnhanced:
         print(f"\n{Fore.RED}No solution found in range{Style.RESET_ALL}")
         return None
     
+    @error_handler(keyhound_logger)
+    @performance_monitor(keyhound_logger)
     def brainwallet_security_test(self, target_address: str, custom_patterns: List[str] = None,
                                  category: Optional[str] = None, language: Optional[str] = None,
                                  difficulty: Optional[str] = None, max_patterns: int = 10000) -> Dict[str, Any]:
@@ -372,6 +390,8 @@ class KeyHoundEnhanced:
         
         return results
     
+    @error_handler(keyhound_logger)
+    @performance_monitor(keyhound_logger)
     def performance_benchmark(self, test_duration: int = 60, use_gpu: bool = None) -> Dict[str, Any]:
         """
         Enhanced performance benchmark with GPU acceleration support.
@@ -547,23 +567,41 @@ class KeyHoundEnhanced:
         private_key_hash = hashlib.sha256(passphrase.encode('utf-8')).hexdigest()
         return int(private_key_hash, 16)
     
+    @performance_monitor(keyhound_logger)
     def _generate_bitcoin_address(self, private_key: int) -> str:
         """
-        Generate a Bitcoin address from a private key.
+        Generate a proper Bitcoin address from a private key using secp256k1.
         
         Args:
             private_key: The private key as an integer
             
         Returns:
             Bitcoin address string
+            
+        Raises:
+            CryptographyError: If address generation fails
         """
-        # Convert private key to hex
-        private_key_hex = hex(private_key)[2:].zfill(64)
-        
-        # For now, return a simplified hash-based address
-        # In a real implementation, this would generate proper Bitcoin addresses
-        address_hash = hashlib.sha256(private_key_hex.encode()).hexdigest()
-        return f"1{address_hash[:26]}"  # Simplified Bitcoin address format
+        try:
+            # Convert private key to hex
+            private_key_hex = hex(private_key)[2:].zfill(64)
+            
+            if self.bitcoin_crypto:
+                # Use proper Bitcoin cryptography
+                bitcoin_address = self.bitcoin_crypto.generate_bitcoin_address(
+                    private_key_hex, 
+                    address_type="legacy", 
+                    network="mainnet"
+                )
+                return bitcoin_address.address
+            else:
+                # Fallback to simplified implementation
+                keyhound_logger.warning("Using fallback Bitcoin address generation")
+                address_hash = hashlib.sha256(private_key_hex.encode()).hexdigest()
+                return f"1{address_hash[:26]}"  # Simplified Bitcoin address format
+                
+        except Exception as e:
+            keyhound_logger.log_error(e)
+            raise CryptographyError(f"Bitcoin address generation failed: {e}")
     
     def save_results(self, filename: str = None) -> str:
         """
