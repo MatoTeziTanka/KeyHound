@@ -1,0 +1,21 @@
+# Core dependencies for Bitcoin Challenge Solver
+cryptography>=41.0.0
+hashlib-compat>=1.0.0
+ecdsa>=0.18.0
+bitcoin>=1.1.42
+base58>=2.1.1
+
+# Optional GPU acceleration
+# Uncomment the following lines if you want GPU support
+# cupy>=12.0.0
+# numba>=0.58.0
+
+# Utility libraries
+numpy>=1.24.0
+tqdm>=4.65.0
+colorama>=0.4.6
+
+# Development dependencies
+pytest>=7.4.0
+black>=23.0.0
+flake8>=6.0.0
