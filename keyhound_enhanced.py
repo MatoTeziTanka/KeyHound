@@ -30,6 +30,7 @@ import numpy as np
 # Import KeyHound modules
 from puzzle_data import BITCOIN_PUZZLES, get_brainwallet_patterns, hex_range_to_int_range
 from gpu_acceleration import GPUAccelerationManager, GPUConfig, GPUPerformanceMetrics
+from gpu_framework import GPUFrameworkManager, GPUDevice, GPUPerformanceMetrics as FrameworkMetrics
 from brainwallet_patterns import BrainwalletPatternLibrary, BrainwalletPattern, PatternMatch
 from bitcoin_cryptography import BitcoinCryptography, BitcoinAddress, CryptographyError
 from error_handling import (
@@ -78,20 +79,44 @@ class KeyHoundEnhanced:
         self.benchmark_results = {}
         self.found_keys = []
         
-        # Initialize GPU acceleration manager
+        # Initialize GPU acceleration manager (legacy)
         self.gpu_manager = None
         if use_gpu:
             try:
                 gpu_config = GPUConfig(framework=gpu_framework, verbose=verbose)
                 self.gpu_manager = GPUAccelerationManager(gpu_config)
                 if self.gpu_manager.is_gpu_available():
-                    logger.info(f"GPU acceleration initialized with {gpu_framework.upper()}")
+                    keyhound_logger.info(f"Legacy GPU acceleration initialized with {gpu_framework.upper()}")
                 else:
-                    logger.warning("GPU acceleration requested but not available, falling back to CPU")
-                    self.use_gpu = False
+                    keyhound_logger.warning("Legacy GPU acceleration requested but not available")
+                    self.gpu_manager = None
             except Exception as e:
-                logger.error(f"GPU initialization failed: {e}")
-                self.use_gpu = False
+                keyhound_logger.log_error(e)
+                self.gpu_manager = None
+        
+        # Initialize advanced GPU framework manager
+        self.gpu_framework_manager = None
+        if use_gpu:
+            try:
+                self.gpu_framework_manager = GPUFrameworkManager(
+                    preferred_framework=gpu_framework,
+                    logger=keyhound_logger
+                )
+                if self.gpu_framework_manager.is_initialized:
+                    keyhound_logger.info("Advanced GPU framework initialized successfully")
+                    device_info = self.gpu_framework_manager.get_device_info()
+                    for framework_name, device in device_info.items():
+                        keyhound_logger.info(f"GPU Device: {device.name} ({framework_name})")
+                else:
+                    keyhound_logger.warning("Advanced GPU framework not available")
+                    self.gpu_framework_manager = None
+            except Exception as e:
+                keyhound_logger.log_error(e)
+                self.gpu_framework_manager = None
+        
+        # Update GPU availability based on framework managers
+        if not self.gpu_manager and not self.gpu_framework_manager:
+            self.use_gpu = False
         
         # Initialize brainwallet pattern library
         try:
@@ -113,9 +138,14 @@ class KeyHoundEnhanced:
         print(f"{Fore.CYAN}KeyHound Enhanced - Comprehensive Bitcoin Cryptographic Tool{Style.RESET_ALL}")
         print(f"{Fore.YELLOW}Initializing with {self.num_threads} CPU threads{Style.RESET_ALL}")
         
-        if self.use_gpu and self.gpu_manager and self.gpu_manager.is_gpu_available():
+        if self.use_gpu and self.gpu_framework_manager and self.gpu_framework_manager.is_initialized:
+            device_info = self.gpu_framework_manager.get_device_info()
+            for framework_name, device in device_info.items():
+                print(f"{Fore.GREEN}GPU acceleration enabled: {device.name} ({framework_name.upper()}){Style.RESET_ALL}")
+            print(f"{Fore.GREEN}Framework: {gpu_framework.upper()}{Style.RESET_ALL}")
+        elif self.use_gpu and self.gpu_manager and self.gpu_manager.is_gpu_available():
             device_info = self.gpu_manager.get_device_info()
-            print(f"{Fore.GREEN}GPU acceleration enabled: {device_info.get('name', 'Unknown Device')}{Style.RESET_ALL}")
+            print(f"{Fore.GREEN}Legacy GPU acceleration enabled: {device_info.get('name', 'Unknown Device')}{Style.RESET_ALL}")
             print(f"{Fore.GREEN}Framework: {gpu_framework.upper()}{Style.RESET_ALL}")
         else:
             print(f"{Fore.BLUE}CPU-only mode{Style.RESET_ALL}")
@@ -414,13 +444,13 @@ class KeyHoundEnhanced:
             return self._cpu_benchmark(test_duration)
     
     def _gpu_benchmark(self, test_duration: int) -> Dict[str, Any]:
-        """Run GPU-accelerated benchmark."""
+        """Run GPU-accelerated benchmark using advanced framework."""
         print(f"{Fore.GREEN}GPU Benchmark Mode{Style.RESET_ALL}")
         
         results = {
             'test_duration': test_duration,
             'framework': self.gpu_framework,
-            'device_info': self.gpu_manager.get_device_info(),
+            'device_info': {},
             'operations_per_second': 0,
             'total_operations': 0,
             'memory_usage_mb': 0,
@@ -429,20 +459,71 @@ class KeyHoundEnhanced:
         }
         
         try:
-            # Run GPU benchmark
-            gpu_metrics = self.gpu_manager.benchmark_performance(num_keys=1000000)
+            # Try advanced GPU framework first
+            if self.gpu_framework_manager and self.gpu_framework_manager.is_initialized:
+                keyhound_logger.info("Running advanced GPU framework benchmark...")
+                
+                # Run benchmark using advanced framework
+                benchmark_results = self.gpu_framework_manager.benchmark_all_frameworks(
+                    num_keys=1000000
+                )
+                
+                # Aggregate results from all frameworks
+                total_operations = 0
+                total_execution_time = 0
+                best_performance = 0
+                best_framework = ""
+                
+                for framework_name, metrics in benchmark_results.items():
+                    total_operations += 1000000  # Each framework tested with 1M keys
+                    total_execution_time += metrics.total_execution_time
+                    if metrics.operations_per_second > best_performance:
+                        best_performance = metrics.operations_per_second
+                        best_framework = framework_name
+                
+                results.update({
+                    'operations_per_second': best_performance,
+                    'total_operations': total_operations,
+                    'execution_time_seconds': total_execution_time,
+                    'gpu_frameworks': benchmark_results,
+                    'best_framework': best_framework
+                })
+                
+                # Get device info from advanced framework
+                device_info = self.gpu_framework_manager.get_device_info()
+                results['device_info'] = device_info.get(best_framework, {})
+                
+                print(f"\n{Fore.GREEN}Advanced GPU Benchmark Complete{Style.RESET_ALL}")
+                print(f"Best Framework: {best_framework.upper()}")
+                print(f"Device: {results['device_info'].name if hasattr(results['device_info'], 'name') else 'Unknown'}")
+                print(f"Operations per second: {results['operations_per_second']:,.0f}")
             
-            results.update({
-                'operations_per_second': gpu_metrics.operations_per_second,
-                'total_operations': gpu_metrics.total_operations,
-                'memory_usage_mb': gpu_metrics.memory_usage_mb,
-                'execution_time_seconds': gpu_metrics.execution_time_seconds
-            })
+            # Fallback to legacy GPU manager
+            elif self.gpu_manager and self.gpu_manager.is_gpu_available():
+                keyhound_logger.info("Running legacy GPU benchmark...")
+                
+                results.update({
+                    'framework': self.gpu_framework,
+                    'device_info': self.gpu_manager.get_device_info()
+                })
+                
+                # Run GPU benchmark
+                gpu_metrics = self.gpu_manager.benchmark_performance(num_keys=1000000)
+                
+                results.update({
+                    'operations_per_second': gpu_metrics.operations_per_second,
+                    'total_operations': gpu_metrics.total_operations,
+                    'memory_usage_mb': gpu_metrics.memory_usage_mb,
+                    'execution_time_seconds': gpu_metrics.execution_time_seconds
+                })
+                
+                print(f"\n{Fore.GREEN}Legacy GPU Benchmark Complete{Style.RESET_ALL}")
+                print(f"Framework: {self.gpu_framework.upper()}")
+                print(f"Device: {results['device_info'].get('name', 'Unknown')}")
+                print(f"Operations per second: {results['operations_per_second']:,.0f}")
             
-            print(f"\n{Fore.GREEN}GPU Benchmark Complete{Style.RESET_ALL}")
-            print(f"Framework: {self.gpu_framework.upper()}")
-            print(f"Device: {results['device_info'].get('name', 'Unknown')}")
-            print(f"Operations per second: {results['operations_per_second']:,.0f}")
+            else:
+                raise GPUError("No GPU acceleration available")
             print(f"Memory usage: {results['memory_usage_mb']:.2f} MB")
             print(f"Total operations: {results['total_operations']:,}")
             
