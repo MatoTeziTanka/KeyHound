@@ -216,6 +216,37 @@ This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENS
 - **Bitcoin Puzzle Data**: Based on [privatekeys.pw/puzzles/bitcoin-puzzle-tx](https://privatekeys.pw/puzzles/bitcoin-puzzle-tx)
 - **Cryptographic Libraries**: secp256k1, cryptography, ecdsa
 
+## 💝 Donations
+
+If you find KeyHound Enhanced useful and would like to support its development, donations are greatly appreciated! Your support helps maintain and improve this comprehensive Bitcoin cryptographic tool.
+
+### Solana (Preferred)
+**Address:** `EhaMxyPNkkMRTugajdzcQ17M2XqCe16GH5UmX7JkmnEu`  
+**Network:** Solana  
+**Wallet:** Phantom (@Norelec)
+
+```
+EhaMxyPNkkMRTugajdzcQ17M2XqCe16GH5UmX7JkmnEu
+```
+
+### How to Donate
+
+1. **Open your Phantom wallet**
+2. **Copy the Solana address above**
+3. **Send SOL to the address**
+4. **Any amount is appreciated!**
+
+### Thank You! 🙏
+
+Your donations help support:
+- ✅ **Development time** for new cryptographic algorithms and optimizations
+- ✅ **Research** into Bitcoin puzzle solving and brainwallet security
+- ✅ **Performance improvements** to compete with established tools
+- ✅ **Academic research** and vulnerability studies
+- ✅ **Documentation** and educational resources
+
+Every donation, no matter the size, makes a difference and is deeply appreciated!
+
 ---
 
 **KeyHound Enhanced** - The ultimate Bitcoin cryptographic research and puzzle-solving tool. 🐕‍🦺🔍
