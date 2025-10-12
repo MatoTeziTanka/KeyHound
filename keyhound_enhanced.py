@@ -33,6 +33,8 @@ from gpu_acceleration import GPUAccelerationManager, GPUConfig, GPUPerformanceMe
 from gpu_framework import GPUFrameworkManager, GPUDevice, GPUPerformanceMetrics as FrameworkMetrics
 from brainwallet_patterns import BrainwalletPatternLibrary, BrainwalletPattern, PatternMatch
 from bitcoin_cryptography import BitcoinCryptography, BitcoinAddress, CryptographyError
+from memory_optimization import MemoryOptimizer, StreamingKeyProcessor, get_memory_optimizer
+from configuration_manager import ConfigurationManager, get_config_manager, ConfigSchema, ConfigValidationRule
 from error_handling import (
     KeyHoundLogger, KeyHoundError, CryptographyError as KeyHoundCryptographyError,
     GPUError, PuzzleError, BrainwalletError, ConfigurationError,
@@ -60,8 +62,9 @@ class KeyHoundEnhanced:
     - Advanced brainwallet pattern library
     """
     
-    def __init__(self, use_gpu: bool = False, num_threads: Optional[int] = None, 
-                 gpu_framework: str = "cuda", verbose: bool = False):
+    def __init__(self, use_gpu: bool = False, num_threads: Optional[int] = None,
+                 gpu_framework: str = "cuda", verbose: bool = False,
+                 config_file: Optional[str] = None, max_memory_mb: int = 1024):
         """
         Initialize the Enhanced KeyHound with legendary code quality.
         
@@ -70,6 +73,8 @@ class KeyHoundEnhanced:
             num_threads: Number of CPU threads to use (default: all available)
             gpu_framework: GPU framework to use ("cuda", "opencl", or "cpu")
             verbose: Enable verbose logging and output
+            config_file: Path to configuration file (optional)
+            max_memory_mb: Maximum memory usage in MB
         """
         self.use_gpu = use_gpu
         self.num_threads = num_threads or mp.cpu_count()
@@ -78,6 +83,25 @@ class KeyHoundEnhanced:
         self.start_time = None
         self.benchmark_results = {}
         self.found_keys = []
+        
+        # Initialize configuration manager
+        try:
+            self.config_manager = get_config_manager("keyhound")
+            if config_file:
+                self.config_manager.load_config(config_file)
+            keyhound_logger.info("Configuration manager initialized successfully")
+        except Exception as e:
+            keyhound_logger.log_error(e)
+            self.config_manager = None
+        
+        # Initialize memory optimizer
+        try:
+            memory_limit = self.config_manager.get("performance.memory_limit_mb", max_memory_mb) if self.config_manager else max_memory_mb
+            self.memory_optimizer = get_memory_optimizer(memory_limit)
+            keyhound_logger.info(f"Memory optimizer initialized with {memory_limit}MB limit")
+        except Exception as e:
+            keyhound_logger.log_error(e)
+            self.memory_optimizer = None
         
         # Initialize GPU acceleration manager (legacy)
         self.gpu_manager = None
@@ -154,6 +178,16 @@ class KeyHoundEnhanced:
             stats = self.pattern_library.get_statistics()
             print(f"{Fore.GREEN}Brainwallet patterns loaded: {stats['total_patterns']} patterns{Style.RESET_ALL}")
             print(f"{Fore.GREEN}Languages: {stats['languages']}, Categories: {stats['categories']}{Style.RESET_ALL}")
+        
+        if self.memory_optimizer:
+            memory_stats = self.memory_optimizer.get_memory_stats()
+            print(f"{Fore.GREEN}Memory optimization enabled: {memory_stats['optimization_limits']['max_memory_mb']:.0f}MB limit{Style.RESET_ALL}")
+            print(f"{Fore.GREEN}Cache enabled: {memory_stats['cache_stats']['hits']} hits, {memory_stats['cache_stats']['misses']} misses{Style.RESET_ALL}")
+        
+        if self.config_manager:
+            config_version = self.config_manager.get("keyhound.version", "unknown")
+            environment = self.config_manager.get("keyhound.environment", "unknown")
+            print(f"{Fore.GREEN}Configuration loaded: v{config_version} ({environment}){Style.RESET_ALL}")
     
     @error_handler(keyhound_logger)
     @performance_monitor(keyhound_logger)
@@ -262,6 +296,75 @@ class KeyHoundEnhanced:
                         })
         
         print(f"\n{Fore.RED}No solution found in range{Style.RESET_ALL}")
+        return None
+    
+    @error_handler(keyhound_logger)
+    @performance_monitor(keyhound_logger)
+    def solve_bitcoin_puzzle_streaming(self, puzzle_id: int, max_keys: int = 1000000) -> Optional[str]:
+        """
+        Solve Bitcoin puzzle using streaming processing for large key spaces.
+        
+        Args:
+            puzzle_id: The puzzle ID to solve
+            max_keys: Maximum number of keys to check
+            
+        Returns:
+            Private key if found, None otherwise
+        """
+        if puzzle_id not in BITCOIN_PUZZLES:
+            keyhound_logger.error(f"Unknown puzzle ID: {puzzle_id}")
+            return None
+        
+        puzzle = BITCOIN_PUZZLES[puzzle_id]
+        target_address = puzzle["address"]
+        
+        keyhound_logger.info(f"Starting streaming puzzle solving for Puzzle #{puzzle_id}")
+        keyhound_logger.info(f"Target address: {target_address}")
+        keyhound_logger.info(f"Key range: 1 to {max_keys}")
+        
+        # Use memory optimizer for streaming processing
+        if self.memory_optimizer:
+            def process_key(key_int):
+                """Process a single key for puzzle solving."""
+                try:
+                    # Generate Bitcoin address
+                    address = self._generate_bitcoin_address(key_int)
+                    
+                    # Check if address matches target
+                    if address == target_address:
+                        keyhound_logger.info(f"SOLUTION FOUND! Private key: {hex(key_int)}")
+                        return {
+                            "private_key": hex(key_int),
+                            "address": address,
+                            "puzzle_id": puzzle_id
+                        }
+                    
+                    return None
+                except Exception as e:
+                    keyhound_logger.warning(f"Error processing key {key_int}: {e}")
+                    return None
+            
+            # Use streaming key processor
+            streaming_processor = StreamingKeyProcessor(self.memory_optimizer, batch_size=10000)
+            
+            # Process keys in streaming fashion
+            results = list(streaming_processor.process_key_range(1, max_keys + 1, process_key))
+            
+            if results:
+                solution = results[0]  # First solution found
+                self.found_keys.append(solution)
+                return solution["private_key"]
+            
+            # Get processing statistics
+            stats = streaming_processor.get_statistics()
+            keyhound_logger.info(f"Streaming processing completed: {stats['keys_processed']:,} keys processed")
+            keyhound_logger.info(f"Processing rate: {stats['keys_per_second']:.0f} keys/second")
+        
+        else:
+            keyhound_logger.warning("Memory optimizer not available, falling back to standard solving")
+            return self.solve_bitcoin_puzzle(puzzle_id)
+        
+        keyhound_logger.info(f"No solution found in {max_keys:,} keys")
         return None
     
     @error_handler(keyhound_logger)
