@@ -34,6 +34,15 @@ toml>=0.10.2
 psutil>=5.9.0
 numpy>=1.24.0
 
+# Web Interface Dependencies
+Flask>=2.3.0
+Flask-SocketIO>=5.3.0
+Werkzeug>=2.3.0
+
+# Distributed Computing Dependencies
+pyzmq>=25.0.0
+redis>=4.5.0
+
 # Enhanced features for brainwallet testing and research
 hashlib>=3.11.0
 secrets>=3.11.0
