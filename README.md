@@ -220,7 +220,9 @@ This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENS
 
 If you find KeyHound Enhanced useful and would like to support its development, donations are greatly appreciated! Your support helps maintain and improve this comprehensive Bitcoin cryptographic tool.
 
-### Solana (Preferred)
+### Supported Networks & Addresses
+
+#### **Solana (Preferred)**
 **Address:** `EhaMxyPNkkMRTugajdzcQ17M2XqCe16GH5UmX7JkmnEu`  
 **Network:** Solana  
 **Wallet:** Phantom (@Norelec)
@@ -229,11 +231,59 @@ If you find KeyHound Enhanced useful and would like to support its development, 
 EhaMxyPNkkMRTugajdzcQ17M2XqCe16GH5UmX7JkmnEu
 ```
 
+#### **Ethereum**
+**Address:** `0xa3dd9A28636eE085CDb9be5abfCDc752D149cfB5`  
+**Network:** Ethereum
+
+```
+0xa3dd9A28636eE085CDb9be5abfCDc752D149cfB5
+```
+
+#### **Base**
+**Address:** `0xa3dd9A28636eE085CDb9be5abfCDc752D149cfB5`  
+**Network:** Base
+
+```
+0xa3dd9A28636eE085CDb9be5abfCDc752D149cfB5
+```
+
+#### **SUI**
+**Address:** `0xba501875a46a0bbd81c9c0a2c0e40c7a3175ca2d4cee5692cd7da53f02be869a`  
+**Network:** SUI
+
+```
+0xba501875a46a0bbd81c9c0a2c0e40c7a3175ca2d4cee5692cd7da53f02be869a
+```
+
+#### **Polygon**
+**Address:** `0xa3dd9A28636eE085CDb9be5abfCDc752D149cfB5`  
+**Network:** Polygon
+
+```
+0xa3dd9A28636eE085CDb9be5abfCDc752D149cfB5
+```
+
+#### **Bitcoin Taproot**
+**Address:** `bc1p907p75h0yxr0nxd3kt826qvhraenq087w6s053q7rymcy3gzczlstl8yqg`  
+**Network:** Bitcoin Taproot
+
+```
+bc1p907p75h0yxr0nxd3kt826qvhraenq087w6s053q7rymcy3gzczlstl8yqg
+```
+
+#### **Bitcoin Native Segwit**
+**Address:** `bc1qxhfatj69l282fsejm0hcs95t4tsg7n3yksdksp`  
+**Network:** Bitcoin Native Segwit
+
+```
+bc1qxhfatj69l282fsejm0hcs95t4tsg7n3yksdksp
+```
+
 ### How to Donate
 
-1. **Open your Phantom wallet**
-2. **Copy the Solana address above**
-3. **Send SOL to the address**
+1. **Choose your preferred network**
+2. **Copy the corresponding address above**
+3. **Send tokens to the address**
 4. **Any amount is appreciated!**
 
 ### Thank You! 🙏
