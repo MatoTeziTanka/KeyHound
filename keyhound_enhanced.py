@@ -37,6 +37,8 @@ from memory_optimization import MemoryOptimizer, StreamingKeyProcessor, get_memo
 from configuration_manager import ConfigurationManager, get_config_manager, ConfigSchema, ConfigValidationRule
 from result_persistence import ResultPersistenceManager, get_result_persistence_manager, ResultType, StorageConfig, StorageBackend
 from performance_monitoring import PerformanceMonitor, get_performance_monitor, MetricType, AlertLevel
+from web_interface import KeyHoundWebInterface, create_web_interface, WebConfig
+from distributed_computing import DistributedComputingManager, create_distributed_manager, NodeRole, NetworkConfig, NetworkProtocol
 from error_handling import (
     KeyHoundLogger, KeyHoundError, CryptographyError as KeyHoundCryptographyError,
     GPUError, PuzzleError, BrainwalletError, ConfigurationError,
@@ -136,6 +138,44 @@ class KeyHoundEnhanced:
             keyhound_logger.log_error(e)
             self.performance_monitor = None
         
+        # Initialize web interface (optional)
+        self.web_interface = None
+        web_enabled = self.config_manager.get("web.enabled", False) if self.config_manager else False
+        if web_enabled:
+            try:
+                web_config = WebConfig(
+                    host=self.config_manager.get("web.host", "0.0.0.0") if self.config_manager else "0.0.0.0",
+                    port=self.config_manager.get("web.port", 5000) if self.config_manager else 5000,
+                    auth_enabled=self.config_manager.get("web.auth_enabled", True) if self.config_manager else True,
+                    debug=self.config_manager.get("web.debug", False) if self.config_manager else False
+                )
+                self.web_interface = create_web_interface(self, web_config)
+                keyhound_logger.info("Web interface initialized successfully")
+            except Exception as e:
+                keyhound_logger.log_error(e)
+                self.web_interface = None
+        
+        # Initialize distributed computing (optional)
+        self.distributed_manager = None
+        distributed_enabled = self.config_manager.get("distributed.enabled", False) if self.config_manager else False
+        if distributed_enabled:
+            try:
+                node_id = self.config_manager.get("distributed.node_id", f"keyhound_{int(time.time())}") if self.config_manager else f"keyhound_{int(time.time())}"
+                role_str = self.config_manager.get("distributed.role", "worker") if self.config_manager else "worker"
+                role = NodeRole.MASTER if role_str == "master" else NodeRole.WORKER
+                
+                network_config = NetworkConfig(
+                    protocol=NetworkProtocol.TCP,
+                    host=self.config_manager.get("distributed.host", "0.0.0.0") if self.config_manager else "0.0.0.0",
+                    port=self.config_manager.get("distributed.port", 5555) if self.config_manager else 5555
+                )
+                
+                self.distributed_manager = create_distributed_manager(node_id, role, network_config)
+                keyhound_logger.info("Distributed computing manager initialized successfully")
+            except Exception as e:
+                keyhound_logger.log_error(e)
+                self.distributed_manager = None
+        
         # Initialize GPU acceleration manager (legacy)
         self.gpu_manager = None
         if use_gpu:
@@ -231,6 +271,17 @@ class KeyHoundEnhanced:
             perf_stats = self.performance_monitor.get_performance_statistics()
             print(f"{Fore.GREEN}Performance monitoring active: {perf_stats.get('current_metrics_count', 0)} metrics{Style.RESET_ALL}")
             print(f"{Fore.GREEN}Active alerts: {perf_stats.get('active_alerts_count', 0)}{Style.RESET_ALL}")
+        
+        if self.web_interface:
+            web_config = self.web_interface.config
+            print(f"{Fore.GREEN}Web interface enabled: http://{web_config.host}:{web_config.port}{Style.RESET_ALL}")
+            print(f"{Fore.GREEN}Authentication: {'enabled' if web_config.auth_enabled else 'disabled'}{Style.RESET_ALL}")
+        
+        if self.distributed_manager:
+            network_stats = self.distributed_manager.get_network_statistics()
+            print(f"{Fore.GREEN}Distributed computing enabled: {network_stats.get('total_nodes', 0)} nodes{Style.RESET_ALL}")
+            print(f"{Fore.GREEN}Node role: {network_stats.get('role', 'unknown').upper()}{Style.RESET_ALL}")
+            print(f"{Fore.GREEN}Network protocol: {self.distributed_manager.config.protocol.value.upper()}{Style.RESET_ALL}")
     
     @error_handler(keyhound_logger)
     @performance_monitor(keyhound_logger)
@@ -951,6 +1002,68 @@ class KeyHoundEnhanced:
         except Exception as e:
             keyhound_logger.log_error(e)
             return None
+    
+    @error_handler(keyhound_logger)
+    def start_web_interface(self):
+        """Start web interface if enabled."""
+        if self.web_interface:
+            try:
+                print(f"{Fore.CYAN}Starting web interface...{Style.RESET_ALL}")
+                self.web_interface.start()
+            except Exception as e:
+                keyhound_logger.log_error(e)
+                print(f"{Fore.RED}Failed to start web interface: {e}{Style.RESET_ALL}")
+        else:
+            print(f"{Fore.YELLOW}Web interface not enabled{Style.RESET_ALL}")
+    
+    @error_handler(keyhound_logger)
+    def start_distributed_computing(self):
+        """Start distributed computing if enabled."""
+        if self.distributed_manager:
+            try:
+                print(f"{Fore.CYAN}Starting distributed computing...{Style.RESET_ALL}")
+                self.distributed_manager.start()
+                print(f"{Fore.GREEN}Distributed computing started successfully{Style.RESET_ALL}")
+            except Exception as e:
+                keyhound_logger.log_error(e)
+                print(f"{Fore.RED}Failed to start distributed computing: {e}{Style.RESET_ALL}")
+        else:
+            print(f"{Fore.YELLOW}Distributed computing not enabled{Style.RESET_ALL}")
+    
+    @error_handler(keyhound_logger)
+    def stop_distributed_computing(self):
+        """Stop distributed computing if enabled."""
+        if self.distributed_manager:
+            try:
+                print(f"{Fore.CYAN}Stopping distributed computing...{Style.RESET_ALL}")
+                self.distributed_manager.stop()
+                print(f"{Fore.GREEN}Distributed computing stopped successfully{Style.RESET_ALL}")
+            except Exception as e:
+                keyhound_logger.log_error(e)
+                print(f"{Fore.RED}Failed to stop distributed computing: {e}{Style.RESET_ALL}")
+    
+    @error_handler(keyhound_logger)
+    def submit_distributed_task(self, task_type: str, data: Dict[str, Any], priority: int = 0) -> Optional[str]:
+        """Submit task for distributed processing."""
+        if self.distributed_manager:
+            try:
+                task_id = self.distributed_manager.submit_task(task_type, data, priority)
+                keyhound_logger.info(f"Distributed task submitted: {task_id}")
+                return task_id
+            except Exception as e:
+                keyhound_logger.log_error(e)
+                return None
+        else:
+            keyhound_logger.warning("Distributed computing not enabled")
+            return None
+    
+    @error_handler(keyhound_logger)
+    def get_distributed_statistics(self) -> Dict[str, Any]:
+        """Get distributed computing statistics."""
+        if self.distributed_manager:
+            return self.distributed_manager.get_network_statistics()
+        else:
+            return {"error": "Distributed computing not enabled"}
 
 
 def main():

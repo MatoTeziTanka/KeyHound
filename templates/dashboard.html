@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KeyHound Enhanced - Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <style>
+        .status-card {
+            transition: transform 0.2s;
+        }
+        .status-card:hover {
+            transform: translateY(-2px);
+        }
+        .metric-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .alert-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+        .success-card {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+        .warning-card {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            color: #333;
+        }
+        .real-time-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        .real-time-online {
+            background-color: #28a745;
+            animation: pulse 2s infinite;
+        }
+        .real-time-offline {
+            background-color: #dc3545;
+        }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        .operation-log {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-dog"></i> KeyHound Enhanced
+            </a>
+            <div class="navbar-nav ms-auto">
+                <span class="navbar-text">
+                    <span class="real-time-indicator real-time-online" id="connectionStatus"></span>
+                    <span id="connectionText">Connected</span>
+                </span>
+                <a class="nav-link" href="/logout">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid mt-4">
+        <!-- System Status Cards -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card status-card success-card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h6 class="card-title">System Status</h6>
+                                <h4 id="systemStatus">Running</h4>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="fas fa-server fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card status-card metric-card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h6 class="card-title">Found Keys</h6>
+                                <h4 id="foundKeys">0</h4>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="fas fa-key fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card status-card metric-card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h6 class="card-title">CPU Usage</h6>
+                                <h4 id="cpuUsage">0%</h4>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="fas fa-microchip fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card status-card metric-card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h6 class="card-title">Memory Usage</h6>
+                                <h4 id="memoryUsage">0%</h4>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="fas fa-memory fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="row">
+            <!-- Left Column -->
+            <div class="col-md-8">
+                <!-- Performance Chart -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5><i class="fas fa-chart-line"></i> Performance Metrics</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <canvas id="performanceChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Operations Control -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5><i class="fas fa-cogs"></i> Operations Control</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <h6>Bitcoin Puzzle Solving</h6>
+                                <div class="mb-3">
+                                    <label class="form-label">Puzzle ID</label>
+                                    <input type="number" class="form-control" id="puzzleId" placeholder="1" min="1" max="160">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Max Keys</label>
+                                    <input type="number" class="form-control" id="maxKeys" placeholder="1000000" min="1000">
+                                </div>
+                                <button class="btn btn-primary" onclick="startPuzzleSolving()">
+                                    <i class="fas fa-play"></i> Start Solving
+                                </button>
+                            </div>
+                            <div class="col-md-4">
+                                <h6>Brainwallet Testing</h6>
+                                <div class="mb-3">
+                                    <label class="form-label">Target Address</label>
+                                    <input type="text" class="form-control" id="targetAddress" placeholder="1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Max Patterns</label>
+                                    <input type="number" class="form-control" id="maxPatterns" placeholder="10000" min="100">
+                                </div>
+                                <button class="btn btn-warning" onclick="startBrainwalletTest()">
+                                    <i class="fas fa-shield-alt"></i> Start Test
+                                </button>
+                            </div>
+                            <div class="col-md-4">
+                                <h6>Performance Benchmark</h6>
+                                <div class="mb-3">
+                                    <label class="form-label">Duration (seconds)</label>
+                                    <input type="number" class="form-control" id="benchmarkDuration" placeholder="60" min="10" max="3600">
+                                </div>
+                                <div class="mb-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="useGPU">
+                                        <label class="form-check-label" for="useGPU">
+                                            Use GPU
+                                        </label>
+                                    </div>
+                                </div>
+                                <button class="btn btn-success" onclick="startBenchmark()">
+                                    <i class="fas fa-tachometer-alt"></i> Start Benchmark
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Operation Log -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-list"></i> Operation Log</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="operation-log" id="operationLog">
+                            <div class="text-muted">No operations yet...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column -->
+            <div class="col-md-4">
+                <!-- Active Alerts -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5><i class="fas fa-exclamation-triangle"></i> Active Alerts</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="activeAlerts">
+                            <div class="text-muted">No active alerts</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- System Components -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5><i class="fas fa-puzzle-piece"></i> System Components</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="systemComponents">
+                            <!-- Components will be populated here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Results -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-database"></i> Recent Results</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="recentResults">
+                            <div class="text-muted">No results yet...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JavaScript -->
+    <script>
+        // Initialize Socket.IO
+        const socket = io();
+        
+        // Initialize Chart.js
+        const ctx = document.getElementById('performanceChart').getContext('2d');
+        const performanceChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'CPU Usage %',
+                    data: [],
+                    borderColor: 'rgb(75, 192, 192)',
+                    tension: 0.1
+                }, {
+                    label: 'Memory Usage %',
+                    data: [],
+                    borderColor: 'rgb(255, 99, 132)',
+                    tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100
+                    }
+                }
+            }
+        });
+
+        // Connection status
+        socket.on('connect', function() {
+            document.getElementById('connectionStatus').className = 'real-time-indicator real-time-online';
+            document.getElementById('connectionText').textContent = 'Connected';
+        });
+
+        socket.on('disconnect', function() {
+            document.getElementById('connectionStatus').className = 'real-time-indicator real-time-offline';
+            document.getElementById('connectionText').textContent = 'Disconnected';
+        });
+
+        // Status updates
+        socket.on('status_update', function(data) {
+            updateSystemStatus(data);
+        });
+
+        // Metrics updates
+        socket.on('metrics_update', function(data) {
+            updatePerformanceMetrics(data);
+        });
+
+        // Operation updates
+        socket.on('operation_started', function(data) {
+            addOperationLog(`Started ${data.operation}`, 'info');
+        });
+
+        socket.on('operation_completed', function(data) {
+            addOperationLog(`Completed ${data.operation}`, 'success');
+        });
+
+        socket.on('operation_error', function(data) {
+            addOperationLog(`Error in ${data.operation}: ${data.error}`, 'danger');
+        });
+
+        // Update system status
+        function updateSystemStatus(data) {
+            if (data.keyhound) {
+                document.getElementById('systemStatus').textContent = data.keyhound.status;
+                document.getElementById('foundKeys').textContent = data.keyhound.found_keys;
+            }
+            
+            updateSystemComponents(data.systems || {});
+        }
+
+        // Update performance metrics
+        function updatePerformanceMetrics(data) {
+            if (data.system_metrics && data.system_metrics.length > 0) {
+                const latest = data.system_metrics[0];
+                document.getElementById('cpuUsage').textContent = latest.cpu_percent.toFixed(1) + '%';
+                document.getElementById('memoryUsage').textContent = latest.memory_percent.toFixed(1) + '%';
+                
+                // Update chart
+                const now = new Date().toLocaleTimeString();
+                performanceChart.data.labels.push(now);
+                performanceChart.data.datasets[0].data.push(latest.cpu_percent);
+                performanceChart.data.datasets[1].data.push(latest.memory_percent);
+                
+                // Keep only last 20 data points
+                if (performanceChart.data.labels.length > 20) {
+                    performanceChart.data.labels.shift();
+                    performanceChart.data.datasets[0].data.shift();
+                    performanceChart.data.datasets[1].data.shift();
+                }
+                
+                performanceChart.update();
+            }
+            
+            updateActiveAlerts(data.active_alerts || []);
+        }
+
+        // Update system components
+        function updateSystemComponents(systems) {
+            const container = document.getElementById('systemComponents');
+            container.innerHTML = '';
+            
+            Object.entries(systems).forEach(([name, system]) => {
+                const statusClass = system.enabled ? 'text-success' : 'text-danger';
+                const statusIcon = system.enabled ? 'fa-check-circle' : 'fa-times-circle';
+                
+                container.innerHTML += `
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span><i class="fas ${statusIcon} ${statusClass}"></i> ${name.replace('_', ' ').toUpperCase()}</span>
+                        <small class="text-muted">${system.enabled ? 'Enabled' : 'Disabled'}</small>
+                    </div>
+                `;
+            });
+        }
+
+        // Update active alerts
+        function updateActiveAlerts(alerts) {
+            const container = document.getElementById('activeAlerts');
+            
+            if (alerts.length === 0) {
+                container.innerHTML = '<div class="text-muted">No active alerts</div>';
+                return;
+            }
+            
+            container.innerHTML = alerts.map(alert => `
+                <div class="alert alert-${getAlertClass(alert.level)} alert-dismissible fade show" role="alert">
+                    <strong>${alert.metric_name}:</strong> ${alert.message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `).join('');
+        }
+
+        // Get alert CSS class
+        function getAlertClass(level) {
+            switch(level) {
+                case 'critical': return 'danger';
+                case 'warning': return 'warning';
+                case 'error': return 'danger';
+                default: return 'info';
+            }
+        }
+
+        // Add operation log entry
+        function addOperationLog(message, type) {
+            const container = document.getElementById('operationLog');
+            const timestamp = new Date().toLocaleTimeString();
+            
+            if (container.children.length === 1 && container.children[0].classList.contains('text-muted')) {
+                container.innerHTML = '';
+            }
+            
+            container.innerHTML = `
+                <div class="alert alert-${type} py-2 mb-2" role="alert">
+                    <small class="text-muted">${timestamp}:</small> ${message}
+                </div>
+            ` + container.innerHTML;
+        }
+
+        // Start puzzle solving
+        function startPuzzleSolving() {
+            const puzzleId = document.getElementById('puzzleId').value;
+            const maxKeys = document.getElementById('maxKeys').value || 1000000;
+            
+            if (!puzzleId) {
+                alert('Please enter a puzzle ID');
+                return;
+            }
+            
+            fetch('/api/puzzle/solve', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    puzzle_id: parseInt(puzzleId),
+                    max_keys: parseInt(maxKeys),
+                    use_streaming: true
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    addOperationLog(`Error: ${data.error}`, 'danger');
+                } else {
+                    addOperationLog(data.message, 'info');
+                }
+            })
+            .catch(error => {
+                addOperationLog(`Error: ${error}`, 'danger');
+            });
+        }
+
+        // Start brainwallet test
+        function startBrainwalletTest() {
+            const targetAddress = document.getElementById('targetAddress').value;
+            const maxPatterns = document.getElementById('maxPatterns').value || 10000;
+            
+            if (!targetAddress) {
+                alert('Please enter a target address');
+                return;
+            }
+            
+            fetch('/api/brainwallet/test', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    target_address: targetAddress,
+                    max_patterns: parseInt(maxPatterns)
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    addOperationLog(`Error: ${data.error}`, 'danger');
+                } else {
+                    addOperationLog(data.message, 'info');
+                }
+            })
+            .catch(error => {
+                addOperationLog(`Error: ${error}`, 'danger');
+            });
+        }
+
+        // Start benchmark
+        function startBenchmark() {
+            const duration = document.getElementById('benchmarkDuration').value || 60;
+            const useGPU = document.getElementById('useGPU').checked;
+            
+            fetch('/api/benchmark', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    duration: parseInt(duration),
+                    use_gpu: useGPU
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    addOperationLog(`Error: ${data.error}`, 'danger');
+                } else {
+                    addOperationLog(data.message, 'info');
+                }
+            })
+            .catch(error => {
+                addOperationLog(`Error: ${error}`, 'danger');
+            });
+        }
+
+        // Load recent results
+        function loadRecentResults() {
+            fetch('/api/results?limit=5')
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    document.getElementById('recentResults').innerHTML = `<div class="text-danger">Error: ${data.error}</div>`;
+                } else if (data.length === 0) {
+                    document.getElementById('recentResults').innerHTML = '<div class="text-muted">No results yet...</div>';
+                } else {
+                    document.getElementById('recentResults').innerHTML = data.map(result => `
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <div>
+                                <small class="text-muted">${result.result_type}</small><br>
+                                <small>${result.description || result.result_id}</small>
+                            </div>
+                            <small class="text-muted">${new Date(result.timestamp).toLocaleDateString()}</small>
+                        </div>
+                    `).join('');
+                }
+            })
+            .catch(error => {
+                document.getElementById('recentResults').innerHTML = `<div class="text-danger">Error loading results</div>`;
+            });
+        }
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            loadRecentResults();
+            setInterval(loadRecentResults, 30000); // Refresh every 30 seconds
+        });
+    </script>
+</body>
+</html>
