@@ -6,11 +6,14 @@ bitcoin>=1.1.42
 base58>=2.1.1
 secp256k1>=0.14.0
 
-# Optional GPU acceleration
-# Uncomment the following lines if you want GPU support
-# cupy>=12.0.0
-# numba>=0.58.0
-# pyopencl>=2022.1
+# GPU acceleration (Legendary Performance)
+cupy>=12.0.0
+pyopencl>=2022.1
+numba>=0.58.0
+
+# Alternative GPU frameworks
+# cuda-python>=12.0.0  # For direct CUDA access
+# pocl>=1.8  # Portable OpenCL implementation
 
 # Utility libraries
 numpy>=1.24.0

@@ -19,42 +19,97 @@ import sys
 import os
 import json
 import threading
+import logging
 from typing import Optional, Tuple, List, Dict, Any
 import multiprocessing as mp
 from tqdm import tqdm
 import colorama
 from colorama import Fore, Style
+import numpy as np
+
+# Import KeyHound modules
 from puzzle_data import BITCOIN_PUZZLES, get_brainwallet_patterns, hex_range_to_int_range
+from gpu_acceleration import GPUAccelerationManager, GPUConfig, GPUPerformanceMetrics
+from brainwallet_patterns import BrainwalletPatternLibrary, BrainwalletPattern, PatternMatch
+
+# Configure logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
 # Initialize colorama for cross-platform colored output
 colorama.init()
 
 
 class KeyHoundEnhanced:
-    """Enhanced KeyHound with comprehensive Bitcoin cryptographic capabilities."""
+    """
+    Enhanced KeyHound with comprehensive Bitcoin cryptographic capabilities.
     
-    def __init__(self, use_gpu: bool = False, num_threads: Optional[int] = None):
+    Legendary Code Quality Standards:
+    - Comprehensive error handling and logging
+    - Type hints for all methods and properties
+    - Detailed documentation and examples
+    - Performance optimization and monitoring
+    - GPU acceleration support
+    - Advanced brainwallet pattern library
+    """
+    
+    def __init__(self, use_gpu: bool = False, num_threads: Optional[int] = None, 
+                 gpu_framework: str = "cuda", verbose: bool = False):
         """
-        Initialize the Enhanced KeyHound.
+        Initialize the Enhanced KeyHound with legendary code quality.
         
         Args:
             use_gpu: Whether to use GPU acceleration (if available)
             num_threads: Number of CPU threads to use (default: all available)
+            gpu_framework: GPU framework to use ("cuda", "opencl", or "cpu")
+            verbose: Enable verbose logging and output
         """
         self.use_gpu = use_gpu
         self.num_threads = num_threads or mp.cpu_count()
+        self.gpu_framework = gpu_framework
+        self.verbose = verbose
         self.start_time = None
         self.benchmark_results = {}
         self.found_keys = []
         
+        # Initialize GPU acceleration manager
+        self.gpu_manager = None
+        if use_gpu:
+            try:
+                gpu_config = GPUConfig(framework=gpu_framework, verbose=verbose)
+                self.gpu_manager = GPUAccelerationManager(gpu_config)
+                if self.gpu_manager.is_gpu_available():
+                    logger.info(f"GPU acceleration initialized with {gpu_framework.upper()}")
+                else:
+                    logger.warning("GPU acceleration requested but not available, falling back to CPU")
+                    self.use_gpu = False
+            except Exception as e:
+                logger.error(f"GPU initialization failed: {e}")
+                self.use_gpu = False
+        
+        # Initialize brainwallet pattern library
+        try:
+            self.pattern_library = BrainwalletPatternLibrary()
+            logger.info(f"Brainwallet pattern library loaded with {len(self.pattern_library.patterns)} patterns")
+        except Exception as e:
+            logger.error(f"Failed to initialize pattern library: {e}")
+            self.pattern_library = None
+        
+        # Print initialization status
         print(f"{Fore.CYAN}KeyHound Enhanced - Comprehensive Bitcoin Cryptographic Tool{Style.RESET_ALL}")
         print(f"{Fore.YELLOW}Initializing with {self.num_threads} CPU threads{Style.RESET_ALL}")
         
-        if use_gpu:
-            print(f"{Fore.GREEN}GPU acceleration enabled{Style.RESET_ALL}")
-            # TODO: Add GPU initialization code
+        if self.use_gpu and self.gpu_manager and self.gpu_manager.is_gpu_available():
+            device_info = self.gpu_manager.get_device_info()
+            print(f"{Fore.GREEN}GPU acceleration enabled: {device_info.get('name', 'Unknown Device')}{Style.RESET_ALL}")
+            print(f"{Fore.GREEN}Framework: {gpu_framework.upper()}{Style.RESET_ALL}")
         else:
             print(f"{Fore.BLUE}CPU-only mode{Style.RESET_ALL}")
+        
+        if self.pattern_library:
+            stats = self.pattern_library.get_statistics()
+            print(f"{Fore.GREEN}Brainwallet patterns loaded: {stats['total_patterns']} patterns{Style.RESET_ALL}")
+            print(f"{Fore.GREEN}Languages: {stats['languages']}, Categories: {stats['categories']}{Style.RESET_ALL}")
     
     def solve_bitcoin_puzzle(self, puzzle_id: int) -> Optional[str]:
         """
@@ -163,95 +218,241 @@ class KeyHoundEnhanced:
         print(f"\n{Fore.RED}No solution found in range{Style.RESET_ALL}")
         return None
     
-    def brainwallet_security_test(self, target_address: str, custom_patterns: List[str] = None) -> Dict[str, Any]:
+    def brainwallet_security_test(self, target_address: str, custom_patterns: List[str] = None,
+                                 category: Optional[str] = None, language: Optional[str] = None,
+                                 difficulty: Optional[str] = None, max_patterns: int = 10000) -> Dict[str, Any]:
         """
-        Test brainwallet security by checking common weak patterns.
+        Enhanced brainwallet security test using comprehensive pattern library.
         
         Args:
             target_address: Target Bitcoin address to check
             custom_patterns: Custom patterns to test (optional)
+            category: Pattern category filter
+            language: Language filter
+            difficulty: Difficulty filter
+            max_patterns: Maximum number of patterns to test
             
         Returns:
-            Dictionary with test results
+            Dictionary with comprehensive test results
         """
-        print(f"{Fore.CYAN}Brainwallet Security Test{Style.RESET_ALL}")
+        print(f"{Fore.CYAN}Enhanced Brainwallet Security Test{Style.RESET_ALL}")
         print(f"{Fore.YELLOW}Target Address: {target_address}{Style.RESET_ALL}")
         
         # Get patterns to test
-        patterns = get_brainwallet_patterns()
-        if custom_patterns:
-            patterns.extend(custom_patterns)
+        patterns_to_test = []
         
-        print(f"{Fore.YELLOW}Testing {len(patterns)} patterns{Style.RESET_ALL}")
+        if self.pattern_library:
+            # Get patterns from library with filters
+            if custom_patterns:
+                # Add custom patterns
+                for pattern_str in custom_patterns:
+                    patterns_to_test.append(BrainwalletPattern(
+                        pattern=pattern_str,
+                        category="custom",
+                        language="custom",
+                        difficulty="unknown",
+                        effectiveness_score=0.5
+                    ))
+            
+            # Get patterns from library
+            library_patterns = self.pattern_library.patterns
+            
+            # Apply filters
+            if category:
+                library_patterns = [p for p in library_patterns if p.category == category]
+            if language:
+                library_patterns = [p for p in library_patterns if p.language == language]
+            if difficulty:
+                library_patterns = [p for p in library_patterns if p.difficulty == difficulty]
+            
+            # Sort by effectiveness score and limit
+            library_patterns.sort(key=lambda x: x.effectiveness_score, reverse=True)
+            patterns_to_test.extend(library_patterns[:max_patterns])
+        else:
+            # Fallback to basic patterns
+            patterns_to_test = [BrainwalletPattern(
+                pattern=p, category="basic", language="english", difficulty="unknown"
+            ) for p in get_brainwallet_patterns()]
+        
+        print(f"{Fore.YELLOW}Testing {len(patterns_to_test)} patterns{Style.RESET_ALL}")
         
         results = {
             'target_address': target_address,
-            'patterns_tested': len(patterns),
+            'patterns_tested': len(patterns_to_test),
             'vulnerabilities_found': [],
             'test_duration': 0,
-            'patterns_per_second': 0
+            'patterns_per_second': 0,
+            'category_breakdown': {},
+            'language_breakdown': {},
+            'difficulty_breakdown': {},
+            'top_effective_patterns': []
         }
         
         start_time = time.time()
+        patterns_processed = 0
         
-        with tqdm(patterns, desc="Testing patterns") as pbar:
+        with tqdm(patterns_to_test, desc="Testing patterns", unit="pattern") as pbar:
             for pattern in pbar:
-                # Generate brainwallet private key from pattern
-                private_key = self._generate_brainwallet_key(pattern)
-                
-                # Generate Bitcoin address
-                address = self._generate_bitcoin_address(private_key)
-                
-                # Check if it matches target
-                if address == target_address:
-                    vulnerability = {
-                        'pattern': pattern,
-                        'private_key': private_key,
-                        'address': address
-                    }
-                    results['vulnerabilities_found'].append(vulnerability)
+                try:
+                    # Generate brainwallet private key from pattern
+                    private_key = self._generate_brainwallet_key(pattern.pattern)
                     
-                    print(f"\n{Fore.RED}🚨 VULNERABILITY FOUND! 🚨{Style.RESET_ALL}")
-                    print(f"{Fore.RED}Pattern: '{pattern}'{Style.RESET_ALL}")
-                    print(f"{Fore.RED}Private Key: {private_key}{Style.RESET_ALL}")
-                    print(f"{Fore.RED}Address: {address}{Style.RESET_ALL}")
+                    # Generate Bitcoin address
+                    address = self._generate_bitcoin_address(private_key)
+                    
+                    # Check if it matches target
+                    if address == target_address:
+                        vulnerability = {
+                            'pattern': pattern.pattern,
+                            'private_key': private_key,
+                            'address': address,
+                            'category': pattern.category,
+                            'language': pattern.language,
+                            'difficulty': pattern.difficulty,
+                            'effectiveness_score': pattern.effectiveness_score,
+                            'confidence': pattern.effectiveness_score
+                        }
+                        results['vulnerabilities_found'].append(vulnerability)
+                        
+                        print(f"\n{Fore.RED}🚨 VULNERABILITY FOUND! 🚨{Style.RESET_ALL}")
+                        print(f"{Fore.RED}Pattern: '{pattern.pattern}'{Style.RESET_ALL}")
+                        print(f"{Fore.RED}Category: {pattern.category}{Style.RESET_ALL}")
+                        print(f"{Fore.RED}Language: {pattern.language}{Style.RESET_ALL}")
+                        print(f"{Fore.RED}Private Key: {private_key}{Style.RESET_ALL}")
+                        print(f"{Fore.RED}Address: {address}{Style.RESET_ALL}")
+                        print(f"{Fore.RED}Confidence: {pattern.effectiveness_score:.3f}{Style.RESET_ALL}")
+                    
+                    # Update progress
+                    patterns_processed += 1
+                    elapsed = time.time() - start_time
+                    if elapsed > 0:
+                        rate = patterns_processed / elapsed
+                        pbar.set_postfix({
+                            'Rate': f"{rate:.0f}/s",
+                            'Vulns': len(results['vulnerabilities_found'])
+                        })
+                
+                except Exception as e:
+                    logger.error(f"Error testing pattern '{pattern.pattern}': {e}")
+                    continue
         
+        # Calculate final results
         results['test_duration'] = time.time() - start_time
-        results['patterns_per_second'] = len(patterns) / results['test_duration'] if results['test_duration'] > 0 else 0
+        results['patterns_per_second'] = patterns_processed / results['test_duration'] if results['test_duration'] > 0 else 0
         
-        print(f"\n{Fore.GREEN}Security Test Complete{Style.RESET_ALL}")
+        # Analyze results by category, language, and difficulty
+        if results['vulnerabilities_found']:
+            categories = [v['category'] for v in results['vulnerabilities_found']]
+            languages = [v['language'] for v in results['vulnerabilities_found']]
+            difficulties = [v['difficulty'] for v in results['vulnerabilities_found']]
+            
+            results['category_breakdown'] = dict(Counter(categories))
+            results['language_breakdown'] = dict(Counter(languages))
+            results['difficulty_breakdown'] = dict(Counter(difficulties))
+            
+            # Get top effective patterns
+            results['top_effective_patterns'] = sorted(
+                results['vulnerabilities_found'],
+                key=lambda x: x['effectiveness_score'],
+                reverse=True
+            )[:10]
+        
+        # Print comprehensive results
+        print(f"\n{Fore.GREEN}Enhanced Security Test Complete{Style.RESET_ALL}")
         print(f"Patterns tested: {results['patterns_tested']}")
         print(f"Vulnerabilities found: {len(results['vulnerabilities_found'])}")
         print(f"Test duration: {results['test_duration']:.2f} seconds")
         print(f"Speed: {results['patterns_per_second']:.0f} patterns/second")
         
+        if results['vulnerabilities_found']:
+            print(f"\n{Fore.RED}Vulnerability Analysis:{Style.RESET_ALL}")
+            print(f"Categories: {results['category_breakdown']}")
+            print(f"Languages: {results['language_breakdown']}")
+            print(f"Difficulties: {results['difficulty_breakdown']}")
+        
         return results
     
-    def performance_benchmark(self, test_duration: int = 60) -> Dict[str, Any]:
+    def performance_benchmark(self, test_duration: int = 60, use_gpu: bool = None) -> Dict[str, Any]:
         """
-        Run performance benchmark to measure cryptographic operations per second.
+        Enhanced performance benchmark with GPU acceleration support.
         
         Args:
             test_duration: Duration in seconds to run benchmark
+            use_gpu: Force GPU usage (None = use instance setting)
             
         Returns:
-            Dictionary with benchmark results
+            Dictionary with comprehensive benchmark results
         """
-        print(f"{Fore.CYAN}Performance Benchmark{Style.RESET_ALL}")
+        print(f"{Fore.CYAN}Enhanced Performance Benchmark{Style.RESET_ALL}")
         print(f"{Fore.YELLOW}Running for {test_duration} seconds{Style.RESET_ALL}")
+        
+        # Determine if we should use GPU
+        benchmark_gpu = use_gpu if use_gpu is not None else self.use_gpu
+        if benchmark_gpu and self.gpu_manager and self.gpu_manager.is_gpu_available():
+            return self._gpu_benchmark(test_duration)
+        else:
+            return self._cpu_benchmark(test_duration)
+    
+    def _gpu_benchmark(self, test_duration: int) -> Dict[str, Any]:
+        """Run GPU-accelerated benchmark."""
+        print(f"{Fore.GREEN}GPU Benchmark Mode{Style.RESET_ALL}")
         
         results = {
             'test_duration': test_duration,
+            'framework': self.gpu_framework,
+            'device_info': self.gpu_manager.get_device_info(),
+            'operations_per_second': 0,
+            'total_operations': 0,
+            'memory_usage_mb': 0,
+            'gpu_utilization': 0,
+            'memory_bandwidth_gb_s': 0
+        }
+        
+        try:
+            # Run GPU benchmark
+            gpu_metrics = self.gpu_manager.benchmark_performance(num_keys=1000000)
+            
+            results.update({
+                'operations_per_second': gpu_metrics.operations_per_second,
+                'total_operations': gpu_metrics.total_operations,
+                'memory_usage_mb': gpu_metrics.memory_usage_mb,
+                'execution_time_seconds': gpu_metrics.execution_time_seconds
+            })
+            
+            print(f"\n{Fore.GREEN}GPU Benchmark Complete{Style.RESET_ALL}")
+            print(f"Framework: {self.gpu_framework.upper()}")
+            print(f"Device: {results['device_info'].get('name', 'Unknown')}")
+            print(f"Operations per second: {results['operations_per_second']:,.0f}")
+            print(f"Memory usage: {results['memory_usage_mb']:.2f} MB")
+            print(f"Total operations: {results['total_operations']:,}")
+            
+        except Exception as e:
+            logger.error(f"GPU benchmark failed: {e}")
+            print(f"{Fore.YELLOW}GPU benchmark failed, falling back to CPU{Style.RESET_ALL}")
+            return self._cpu_benchmark(test_duration)
+        
+        # Save benchmark results
+        self.benchmark_results = results
+        
+        return results
+    
+    def _cpu_benchmark(self, test_duration: int) -> Dict[str, Any]:
+        """Run CPU-only benchmark."""
+        print(f"{Fore.BLUE}CPU Benchmark Mode{Style.RESET_ALL}")
+        
+        results = {
+            'test_duration': test_duration,
+            'framework': 'cpu',
             'operations_per_second': 0,
             'total_operations': 0,
             'cpu_threads': self.num_threads,
-            'gpu_acceleration': self.use_gpu
+            'gpu_acceleration': False
         }
         
         start_time = time.time()
         operations = 0
         
-        with tqdm(total=test_duration, desc="Benchmarking", unit="s") as pbar:
+        with tqdm(total=test_duration, desc="CPU Benchmarking", unit="s") as pbar:
             while time.time() - start_time < test_duration:
                 # Perform cryptographic operations
                 private_key = operations
@@ -272,11 +473,10 @@ class KeyHoundEnhanced:
         results['total_operations'] = operations
         results['operations_per_second'] = operations / test_duration
         
-        print(f"\n{Fore.GREEN}Benchmark Complete{Style.RESET_ALL}")
+        print(f"\n{Fore.GREEN}CPU Benchmark Complete{Style.RESET_ALL}")
         print(f"Total operations: {results['total_operations']:,}")
         print(f"Operations per second: {results['operations_per_second']:.0f}")
         print(f"CPU threads: {results['cpu_threads']}")
-        print(f"GPU acceleration: {results['gpu_acceleration']}")
         
         # Save benchmark results
         self.benchmark_results = results
