@@ -30,6 +30,10 @@ psutil>=5.9.0
 PyYAML>=6.0.0
 toml>=0.10.2
 
+# Performance Monitoring Dependencies
+psutil>=5.9.0
+numpy>=1.24.0
+
 # Enhanced features for brainwallet testing and research
 hashlib>=3.11.0
 secrets>=3.11.0

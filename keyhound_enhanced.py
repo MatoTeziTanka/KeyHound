@@ -35,6 +35,8 @@ from brainwallet_patterns import BrainwalletPatternLibrary, BrainwalletPattern, 
 from bitcoin_cryptography import BitcoinCryptography, BitcoinAddress, CryptographyError
 from memory_optimization import MemoryOptimizer, StreamingKeyProcessor, get_memory_optimizer
 from configuration_manager import ConfigurationManager, get_config_manager, ConfigSchema, ConfigValidationRule
+from result_persistence import ResultPersistenceManager, get_result_persistence_manager, ResultType, StorageConfig, StorageBackend
+from performance_monitoring import PerformanceMonitor, get_performance_monitor, MetricType, AlertLevel
 from error_handling import (
     KeyHoundLogger, KeyHoundError, CryptographyError as KeyHoundCryptographyError,
     GPUError, PuzzleError, BrainwalletError, ConfigurationError,
@@ -102,6 +104,37 @@ class KeyHoundEnhanced:
         except Exception as e:
             keyhound_logger.log_error(e)
             self.memory_optimizer = None
+        
+        # Initialize result persistence manager
+        try:
+            results_dir = self.config_manager.get("storage.results_dir", "./results") if self.config_manager else "./results"
+            storage_config = StorageConfig(
+                backend=StorageBackend.FILE_SYSTEM,
+                base_path=results_dir,
+                encryption_enabled=self.config_manager.get("security.encrypt_config", False) if self.config_manager else False,
+                compression_enabled=True,
+                backup_enabled=self.config_manager.get("storage.backup_enabled", True) if self.config_manager else True
+            )
+            self.result_persistence = get_result_persistence_manager(storage_config)
+            keyhound_logger.info("Result persistence manager initialized successfully")
+        except Exception as e:
+            keyhound_logger.log_error(e)
+            self.result_persistence = None
+        
+        # Initialize performance monitor
+        try:
+            performance_db = self.config_manager.get("storage.performance_db", "./performance_metrics.db") if self.config_manager else "./performance_metrics.db"
+            self.performance_monitor = get_performance_monitor(performance_db)
+            
+            # Set up performance alerts
+            self.performance_monitor.set_alert_threshold("cpu_percent", 90.0, AlertLevel.CRITICAL)
+            self.performance_monitor.set_alert_threshold("memory_percent", 90.0, AlertLevel.CRITICAL)
+            self.performance_monitor.set_alert_threshold("puzzle_solving_rate", 1000.0, AlertLevel.INFO)
+            
+            keyhound_logger.info("Performance monitor initialized successfully")
+        except Exception as e:
+            keyhound_logger.log_error(e)
+            self.performance_monitor = None
         
         # Initialize GPU acceleration manager (legacy)
         self.gpu_manager = None
@@ -188,6 +221,16 @@ class KeyHoundEnhanced:
             config_version = self.config_manager.get("keyhound.version", "unknown")
             environment = self.config_manager.get("keyhound.environment", "unknown")
             print(f"{Fore.GREEN}Configuration loaded: v{config_version} ({environment}){Style.RESET_ALL}")
+        
+        if self.result_persistence:
+            storage_stats = self.result_persistence.get_storage_statistics()
+            print(f"{Fore.GREEN}Result persistence enabled: {storage_stats.get('total_results', 0)} results stored{Style.RESET_ALL}")
+            print(f"{Fore.GREEN}Storage backend: {storage_stats.get('storage_backend', 'unknown')}{Style.RESET_ALL}")
+        
+        if self.performance_monitor:
+            perf_stats = self.performance_monitor.get_performance_statistics()
+            print(f"{Fore.GREEN}Performance monitoring active: {perf_stats.get('current_metrics_count', 0)} metrics{Style.RESET_ALL}")
+            print(f"{Fore.GREEN}Active alerts: {perf_stats.get('active_alerts_count', 0)}{Style.RESET_ALL}")
     
     @error_handler(keyhound_logger)
     @performance_monitor(keyhound_logger)
@@ -296,6 +339,18 @@ class KeyHoundEnhanced:
                         })
         
         print(f"\n{Fore.RED}No solution found in range{Style.RESET_ALL}")
+        
+        # Record performance metrics
+        if self.performance_monitor:
+            self.performance_monitor.record_metric(
+                "puzzle_solving_attempt",
+                1,
+                MetricType.COUNTER,
+                {"puzzle_id": str(puzzle_id), "result": "not_found"},
+                "attempts",
+                f"Attempt to solve puzzle {puzzle_id}"
+            )
+        
         return None
     
     @error_handler(keyhound_logger)
@@ -353,6 +408,31 @@ class KeyHoundEnhanced:
             if results:
                 solution = results[0]  # First solution found
                 self.found_keys.append(solution)
+                
+                # Save solution to result persistence
+                if self.result_persistence:
+                    self.result_persistence.save_result(
+                        f"puzzle_{puzzle_id}_solution_{int(time.time())}",
+                        ResultType.PUZZLE_SOLUTION,
+                        solution,
+                        {
+                            "description": f"Solution for Bitcoin puzzle #{puzzle_id}",
+                            "tags": ["puzzle", "solution", f"puzzle_{puzzle_id}"],
+                            "session_id": str(int(time.time()))
+                        }
+                    )
+                
+                # Record performance metrics
+                if self.performance_monitor:
+                    self.performance_monitor.record_metric(
+                        "puzzle_solved",
+                        1,
+                        MetricType.COUNTER,
+                        {"puzzle_id": str(puzzle_id)},
+                        "solutions",
+                        f"Successfully solved puzzle {puzzle_id}"
+                    )
+                
                 return solution["private_key"]
             
             # Get processing statistics
@@ -816,6 +896,61 @@ class KeyHoundEnhanced:
         
         print(f"{Fore.GREEN}Results saved to: {filename}{Style.RESET_ALL}")
         return filename
+    
+    @error_handler(keyhound_logger)
+    def generate_performance_report(self, duration_hours: int = 24) -> Optional[Dict[str, Any]]:
+        """
+        Generate comprehensive performance report.
+        
+        Args:
+            duration_hours: Report duration in hours
+            
+        Returns:
+            Performance report data
+        """
+        if not self.performance_monitor:
+            keyhound_logger.warning("Performance monitor not available")
+            return None
+        
+        try:
+            # Calculate time range
+            end_time = datetime.now(timezone.utc)
+            start_time = end_time - timedelta(hours=duration_hours)
+            
+            # Generate report
+            report = self.performance_monitor.generate_performance_report(
+                start_time.isoformat(),
+                end_time.isoformat()
+            )
+            
+            if report:
+                keyhound_logger.info(f"Performance report generated: {report.report_id}")
+                
+                # Add KeyHound-specific metrics
+                report_data = {
+                    "report_id": report.report_id,
+                    "title": report.title,
+                    "start_time": report.start_time,
+                    "end_time": report.end_time,
+                    "summary": report.summary,
+                    "recommendations": report.recommendations,
+                    "keyhound_metrics": {
+                        "found_keys_count": len(self.found_keys),
+                        "memory_optimizer_stats": self.memory_optimizer.get_memory_stats() if self.memory_optimizer else {},
+                        "storage_stats": self.result_persistence.get_storage_statistics() if self.result_persistence else {},
+                        "configuration_stats": {
+                            "environment": self.config_manager.get("keyhound.environment") if self.config_manager else "unknown",
+                            "gpu_enabled": self.use_gpu,
+                            "thread_count": self.num_threads
+                        }
+                    }
+                }
+                
+                return report_data
+            
+        except Exception as e:
+            keyhound_logger.log_error(e)
+            return None
 
 
 def main():
