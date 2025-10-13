@@ -448,3 +448,4 @@ if __name__ == "__main__":
     print(f"\nTest execution completed in {end_time - start_time:.2f} seconds")
     print(f"Overall success: {results['test_summary']['overall_success']}")
     print(f"Success rate: {results['test_summary']['success_rate']:.1f}%")
+

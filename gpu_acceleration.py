@@ -491,3 +491,4 @@ if __name__ == "__main__":
     
     # Cleanup
     gpu_manager.cleanup()
+

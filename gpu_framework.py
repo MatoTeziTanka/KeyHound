@@ -781,3 +781,4 @@ if __name__ == "__main__":
         print(f"GPU framework test failed: {e}")
     
     print("GPU framework integration test completed!")
+
