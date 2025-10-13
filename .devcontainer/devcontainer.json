@@ -34,7 +34,7 @@
         }
     },
     
-    "postCreateCommand": "pip install --upgrade pip && pip install -r requirements.txt && python setup_keyhound.py",
+    "postCreateCommand": "chmod +x .devcontainer/postCreateCommand.sh && ./.devcontainer/postCreateCommand.sh",
     
     "forwardPorts": [5000, 5001, 8080],
     "portsAttributes": {
