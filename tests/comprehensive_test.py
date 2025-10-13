@@ -479,7 +479,7 @@ def main():
     print(f"\n🚀 Ready to run KeyHound Enhanced!")
     print(f"   Web Interface: http://localhost:5000")
     print(f"   Mobile App: http://localhost:5001/mobile")
-    print(f"   Command: python keyhound_enhanced.py --help")
+    print(f"   Command: python keyhound/main.py --help")
 
 if __name__ == "__main__":
     main()

@@ -9,8 +9,8 @@ import os
 import argparse
 from pathlib import Path
 
-# Add src directory to Python path
-sys.path.insert(0, str(Path(__file__).parent / "src"))
+# Add current directory to Python path for local imports
+sys.path.insert(0, str(Path(__file__).parent))
 
 def main():
     """Main entry point for KeyHound Enhanced"""
@@ -36,7 +36,7 @@ Examples:
                        help='Enable GPU acceleration')
     parser.add_argument('--distributed', action='store_true',
                        help='Enable distributed computing')
-    parser.add_argument('--config', type=str, default='config/default.yaml',
+    parser.add_argument('--config', type=str, default='../config/default.yaml',
                        help='Configuration file path')
     parser.add_argument('--log-level', choices=['DEBUG', 'INFO', 'WARNING', 'ERROR'],
                        default='INFO', help='Logging level')

@@ -19,7 +19,7 @@ services:
       - ./results:/app/results
       - ./config:/app/config
     environment:
-      - KEYHOUND_CONFIG=config/docker.yaml
+      - KEYHOUND_CONFIG=config/environments/production.yaml
       - KEYHOUND_LOG_LEVEL=INFO
       - NVIDIA_VISIBLE_DEVICES=all
     deploy:

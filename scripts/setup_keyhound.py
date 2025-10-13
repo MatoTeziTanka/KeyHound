@@ -181,10 +181,10 @@ def main():
     if test_basic_functionality():
         print("\n🚀 Setup completed successfully!")
         print("\nNext steps:")
-        print("1. Run: python keyhound_enhanced.py --help")
-        print("2. Start web interface: python keyhound_enhanced.py --web")
-        print("3. Start mobile app: python keyhound_enhanced.py --mobile")
-        print("4. Solve a puzzle: python keyhound_enhanced.py --puzzle 1")
+        print("1. Run: python keyhound/main.py --help")
+        print("2. Start web interface: python keyhound/main.py --web")
+        print("3. Start mobile app: python keyhound/main.py --mobile")
+        print("4. Solve a puzzle: python keyhound/main.py --puzzle 1")
     else:
         print("\n⚠️  Setup completed with warnings - check configuration")
 
