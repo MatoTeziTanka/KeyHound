@@ -95,7 +95,7 @@ create_instance() {
     print_status "Creating FREE GPU instance for 24-hour operation..."
     
     # List of zones to try (ordered by preference)
-    ZONES=("us-east1-c" "us-central1-a" "us-central1-b" "us-west1-a" "us-west1-b" "us-east4-a" "us-east4-b")
+    ZONES=("us-east1-c" "us-central1-a" "us-central1-b" "us-west1-a" "us-west1-b" "us-east4-a" "us-east4-b" "us-west4-a" "us-west4-b" "europe-west1-b" "europe-west1-c")
     
     for zone in "${ZONES[@]}"; do
         print_status "Trying zone: $zone"
@@ -129,7 +129,42 @@ create_instance() {
         fi
     done
     
-    print_error "Failed to create instance in any zone. T4 GPUs may be unavailable."
+    print_warning "T4 GPUs unavailable in all zones. Trying CPU-only fallback..."
+    
+    # Try CPU-only instance as fallback
+    for zone in "${ZONES[@]}"; do
+        print_status "Trying CPU-only instance in zone: $zone"
+        
+        # Check if instance exists in this zone
+        if gcloud compute instances describe $INSTANCE_NAME --zone=$zone &> /dev/null; then
+            print_warning "Instance $INSTANCE_NAME already exists in $zone. Deleting..."
+            gcloud compute instances delete $INSTANCE_NAME --zone=$zone --quiet
+        fi
+        
+        # Try to create CPU-only instance in this zone
+        if gcloud compute instances create $INSTANCE_NAME \
+            --zone=$zone \
+            --machine-type=n1-standard-4 \
+            --maintenance-policy=TERMINATE \
+            --restart-on-failure \
+            --boot-disk-size=$DISK_SIZE \
+            --boot-disk-type=pd-standard \
+            --image-family=ubuntu-2204-lts \
+            --image-project=ubuntu-os-cloud \
+            --metadata-from-file startup-script=startup_free_24hour.sh \
+            --scopes=https://www.googleapis.com/auth/cloud-platform; then
+            
+            print_success "CPU-only instance created successfully in zone: $zone"
+            print_status "⚠️  Running without GPU acceleration (slower but still effective)"
+            print_status "💡 Try again later for T4 GPU availability"
+            ZONE=$zone  # Update global zone variable
+            return 0
+        else
+            print_warning "Zone $zone failed, trying next zone..."
+        fi
+    done
+    
+    print_error "Failed to create instance in any zone. Please try again later."
     return 1
 }
 
