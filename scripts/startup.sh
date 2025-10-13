@@ -69,3 +69,4 @@ echo "  Web Interface: http://localhost:5000"
 echo "  Mobile App:    http://localhost:5001/mobile"
 echo "  PWA App:       http://localhost:5001/mobile/pwa"
 
+
