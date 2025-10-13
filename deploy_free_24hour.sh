@@ -11,7 +11,7 @@ echo "=============================================="
 # FREE TIER Configuration
 PROJECT_NAME="keyhound-enhanced"
 INSTANCE_NAME="keyhound-free"
-ZONE="us-central1-b"
+ZONE="us-east1-c"
 MACHINE_TYPE="n1-standard-1"  # Minimal cost
 GPU_TYPE="nvidia-tesla-t4"    # FREE with your 30 hours/week
 GPU_COUNT=1
@@ -90,31 +90,47 @@ setup_project() {
     print_success "APIs enabled"
 }
 
-# Create FREE GPU instance
+# Create FREE GPU instance with zone fallback
 create_instance() {
     print_status "Creating FREE GPU instance for 24-hour operation..."
     
-    if gcloud compute instances describe $INSTANCE_NAME --zone=$ZONE &> /dev/null; then
-        print_warning "Instance $INSTANCE_NAME already exists. Deleting..."
-        gcloud compute instances delete $INSTANCE_NAME --zone=$ZONE --quiet
-    fi
+    # List of zones to try (ordered by preference)
+    ZONES=("us-east1-c" "us-central1-a" "us-central1-b" "us-west1-a" "us-west1-b" "us-east4-a" "us-east4-b")
     
-    # Create instance with FREE GPU (using your 30 free hours)
-    gcloud compute instances create $INSTANCE_NAME \
-        --zone=$ZONE \
-        --machine-type=$MACHINE_TYPE \
-        --accelerator="type=$GPU_TYPE,count=$GPU_COUNT" \
-        --maintenance-policy=TERMINATE \
-        --restart-on-failure \
-        --boot-disk-size=$DISK_SIZE \
-        --boot-disk-type=pd-standard \
-        --image-family=ubuntu-2204-lts \
-        --image-project=ubuntu-os-cloud \
-        --metadata-from-file startup-script=startup_free_24hour.sh \
-        --scopes=https://www.googleapis.com/auth/cloud-platform
+    for zone in "${ZONES[@]}"; do
+        print_status "Trying zone: $zone"
+        
+        # Check if instance exists in this zone
+        if gcloud compute instances describe $INSTANCE_NAME --zone=$zone &> /dev/null; then
+            print_warning "Instance $INSTANCE_NAME already exists in $zone. Deleting..."
+            gcloud compute instances delete $INSTANCE_NAME --zone=$zone --quiet
+        fi
+        
+        # Try to create instance in this zone
+        if gcloud compute instances create $INSTANCE_NAME \
+            --zone=$zone \
+            --machine-type=$MACHINE_TYPE \
+            --accelerator="type=$GPU_TYPE,count=$GPU_COUNT" \
+            --maintenance-policy=TERMINATE \
+            --restart-on-failure \
+            --boot-disk-size=$DISK_SIZE \
+            --boot-disk-type=pd-standard \
+            --image-family=ubuntu-2204-lts \
+            --image-project=ubuntu-os-cloud \
+            --metadata-from-file startup-script=startup_free_24hour.sh \
+            --scopes=https://www.googleapis.com/auth/cloud-platform; then
+            
+            print_success "FREE GPU instance created successfully in zone: $zone"
+            print_status "Using your 30 free GPU hours per week"
+            ZONE=$zone  # Update global zone variable
+            return 0
+        else
+            print_warning "Zone $zone failed, trying next zone..."
+        fi
+    done
     
-    print_success "FREE GPU instance created successfully"
-    print_status "Using your 30 free GPU hours per week"
+    print_error "Failed to create instance in any zone. T4 GPUs may be unavailable."
+    return 1
 }
 
 # Create FREE startup script
