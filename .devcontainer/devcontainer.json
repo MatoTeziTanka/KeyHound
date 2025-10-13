@@ -1,0 +1,65 @@
+{
+    "name": "KeyHound Enhanced Development Environment",
+    "image": "mcr.microsoft.com/devcontainers/python:3.11-bullseye",
+    
+    "features": {
+        "ghcr.io/devcontainers/features/git:1": {},
+        "ghcr.io/devcontainers/features/github-cli:1": {},
+        "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+    },
+    
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-python.python",
+                "ms-python.flake8",
+                "ms-python.black-formatter",
+                "ms-python.mypy-type-checker",
+                "ms-toolsai.jupyter",
+                "ms-python.pylint",
+                "ms-vscode.vscode-json",
+                "redhat.vscode-yaml"
+            ],
+            "settings": {
+                "python.defaultInterpreterPath": "/usr/local/bin/python",
+                "python.linting.enabled": true,
+                "python.linting.flake8Enabled": true,
+                "python.formatting.provider": "black",
+                "python.testing.pytestEnabled": true,
+                "python.testing.unittestEnabled": false,
+                "python.testing.pytestArgs": [
+                    "tests"
+                ]
+            }
+        }
+    },
+    
+    "postCreateCommand": "pip install --upgrade pip && pip install -r requirements.txt && python setup_keyhound.py",
+    
+    "forwardPorts": [5000, 5001, 8080],
+    "portsAttributes": {
+        "5000": {
+            "label": "KeyHound Web Interface",
+            "onAutoForward": "notify"
+        },
+        "5001": {
+            "label": "KeyHound Mobile App",
+            "onAutoForward": "notify"
+        },
+        "8080": {
+            "label": "Jupyter Notebooks",
+            "onAutoForward": "silent"
+        }
+    },
+    
+    "mounts": [
+        "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"
+    ],
+    
+    "remoteUser": "vscode",
+    
+    "containerEnv": {
+        "KEYHOUND_ENV": "codespace",
+        "PYTHONPATH": "/workspaces/KeyHound"
+    }
+}
