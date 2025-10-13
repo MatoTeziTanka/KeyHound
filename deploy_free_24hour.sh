@@ -18,8 +18,10 @@ GPU_COUNT=1
 DISK_SIZE="20GB"  # Minimal disk
 MAX_HOURS=24
 
-echo "💰 Cost: ~$1.20 for 24 hours (GPU is FREE with your student account!)"
-echo "🎯 Using your 30 free GPU hours per week"
+echo "💰 Cost: ~$1.20 for 24 hours (T4 GPU is FREE with your student account!)"
+echo "🎯 Using your 30 free T4 GPU hours per week"
+echo "❌ A100 GPU costs ~$2.93/hour (NOT free)"
+echo "✅ T4 GPU costs $0.00/hour (FREE with student account!)"
 echo ""
 
 # Colors for output
@@ -106,8 +108,8 @@ create_instance() {
         --restart-on-failure \
         --boot-disk-size=$DISK_SIZE \
         --boot-disk-type=pd-standard \
-        --image-family=pytorch-latest-gpu \
-        --image-project=deeplearning-platform-release \
+        --image-family=ubuntu-2004-lts \
+        --image-project=ubuntu-os-cloud \
         --metadata-from-file startup-script=startup_free_24hour.sh \
         --scopes=https://www.googleapis.com/auth/cloud-platform
     
