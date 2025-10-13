@@ -1,0 +1,70 @@
+# KeyHound Enhanced - Docker Configuration
+# Optimized for containerized deployment
+
+# Application Settings
+app:
+  name: "KeyHound Enhanced (Docker)"
+  version: "2.0.0"
+  debug: false
+  log_level: "INFO"
+  environment: "docker"
+
+# Bitcoin Cryptography
+bitcoin:
+  network: "mainnet"
+  address_types: ["legacy", "p2sh", "bech32"]
+  default_puzzle_bits: 40
+
+# GPU Acceleration (Docker optimized)
+gpu:
+  enabled: true
+  framework: "cuda"
+  batch_size: 5000  # Reduced for container memory limits
+  max_memory_usage: 0.6  # Conservative for containers
+
+# Performance Settings (Container optimized)
+performance:
+  max_threads: 2  # Reduced for containers
+  memory_limit_gb: 4  # Container-friendly
+  cache_size: 500
+  save_interval_minutes: 15
+
+# Web Interface (Docker networking)
+web:
+  host: "0.0.0.0"  # Bind to all interfaces
+  port: 5000
+  debug: false
+  secret_key: "docker-secret-key-change-in-production"
+
+# Database (Container storage)
+database:
+  type: "sqlite"
+  path: "/app/data/keyhound.db"
+  backup_interval_hours: 12
+
+# Distributed Computing (Docker networking)
+distributed:
+  enabled: false  # Typically single container
+  master_port: 5555
+  worker_timeout: 300
+  max_workers: 4
+
+# Security
+security:
+  enable_authentication: true
+  session_timeout_minutes: 30
+  max_login_attempts: 3
+
+# Logging (Container logging)
+logging:
+  level: "INFO"
+  file: "/app/logs/keyhound.log"
+  max_size_mb: 50
+  backup_count: 3
+
+# Results Storage (Container volumes)
+results:
+  directory: "/app/results"
+  backup_directory: "/app/results/backups"
+  encryption_enabled: true
+  compression_enabled: true
