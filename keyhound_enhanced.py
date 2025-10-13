@@ -1180,6 +1180,134 @@ class KeyHoundEnhanced:
                 keyhound_logger.log_error(e)
         else:
             keyhound_logger.warning("Mobile app not enabled")
+    
+    @error_handler(keyhound_logger)
+    def verify_found_key(self, private_key: str) -> Dict[str, Any]:
+        """Verify a found Bitcoin private key and check balance."""
+        try:
+            # Import verification module
+            from verify_found_keys import BitcoinKeyVerifier
+            
+            verifier = BitcoinKeyVerifier()
+            result = verifier.verify_private_key(private_key)
+            
+            # Convert to dictionary for return
+            verification_result = {
+                "private_key": result.private_key,
+                "bitcoin_address": result.bitcoin_address,
+                "address_type": result.address_type,
+                "is_valid": result.is_valid,
+                "balance_btc": result.balance_btc,
+                "balance_usd": result.balance_usd,
+                "transaction_count": result.transaction_count,
+                "first_seen": result.first_seen,
+                "last_activity": result.last_activity,
+                "verification_time": result.verification_time,
+                "explorer_urls": result.explorer_urls
+            }
+            
+            # Send notification if balance found
+            if result.balance_btc > 0:
+                self.send_mobile_notification(
+                    "puzzle_solved",
+                    f"FOUND BALANCE: {result.balance_btc:.8f} BTC!",
+                    f"Address: {result.bitcoin_address}\nPrivate Key: {private_key[:16]}..."
+                )
+                
+                print(f"\n🚨 IMPORTANT: FOUND BALANCE OF {result.balance_btc:.8f} BTC!")
+                print(f"   Address: {result.bitcoin_address}")
+                print(f"   Private Key: {private_key}")
+                print(f"   Secure this key immediately!")
+            
+            keyhound_logger.info(f"Key verification completed: {result.bitcoin_address} - {result.balance_btc:.8f} BTC")
+            return verification_result
+            
+        except Exception as e:
+            keyhound_logger.log_error(e)
+            return {"error": str(e)}
+    
+    @error_handler(keyhound_logger)
+    def show_found_keys(self) -> List[Dict[str, Any]]:
+        """Show all found keys with verification."""
+        try:
+            found_keys = []
+            
+            # Load from result persistence if available
+            if self.result_persistence:
+                results = self.result_persistence.list_results(limit=1000)
+                for result in results:
+                    if hasattr(result, 'private_key'):
+                        key_data = {
+                            "result_id": getattr(result, 'result_id', 'unknown'),
+                            "type": getattr(result, 'type', 'unknown'),
+                            "private_key": result.private_key,
+                            "bitcoin_address": getattr(result, 'bitcoin_address', 'unknown'),
+                            "puzzle_id": getattr(result, 'puzzle_id', None),
+                            "timestamp": getattr(result, 'timestamp', None),
+                            "balance_btc": 0.0  # Will be updated by verification
+                        }
+                        found_keys.append(key_data)
+            
+            # Load from found_keys list
+            for key_data in self.found_keys:
+                found_keys.append({
+                    "type": "puzzle_solution",
+                    "private_key": key_data.get('private_key', ''),
+                    "bitcoin_address": key_data.get('bitcoin_address', ''),
+                    "puzzle_id": key_data.get('puzzle_id', None),
+                    "timestamp": key_data.get('timestamp', None),
+                    "balance_btc": 0.0
+                })
+            
+            # Verify each key
+            print(f"\n🔍 Found {len(found_keys)} keys. Verifying balances...")
+            
+            for i, key_data in enumerate(found_keys, 1):
+                private_key = key_data.get('private_key', '')
+                if private_key:
+                    print(f"[{i}/{len(found_keys)}] Verifying {private_key[:16]}...")
+                    verification = self.verify_found_key(private_key)
+                    key_data.update(verification)
+            
+            return found_keys
+            
+        except Exception as e:
+            keyhound_logger.log_error(e)
+            return []
+    
+    @error_handler(keyhound_logger)
+    def export_found_keys(self, filename: str = None) -> str:
+        """Export all found keys to a secure file."""
+        try:
+            if filename is None:
+                timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+                filename = f"found_keys_export_{timestamp}.json"
+            
+            found_keys = self.show_found_keys()
+            
+            export_data = {
+                "export_timestamp": datetime.now().isoformat(),
+                "total_keys": len(found_keys),
+                "keys_with_balance": len([k for k in found_keys if k.get('balance_btc', 0) > 0]),
+                "total_balance_btc": sum(k.get('balance_btc', 0) for k in found_keys),
+                "found_keys": found_keys
+            }
+            
+            # Save to file
+            with open(filename, 'w') as f:
+                json.dump(export_data, f, indent=2)
+            
+            print(f"\n💾 Exported {len(found_keys)} keys to: {filename}")
+            
+            if export_data["total_balance_btc"] > 0:
+                print(f"💰 Total balance found: {export_data['total_balance_btc']:.8f} BTC")
+                print(f"🔐 SECURE THIS FILE - Contains private keys with balance!")
+            
+            return filename
+            
+        except Exception as e:
+            keyhound_logger.log_error(e)
+            return ""
 
 
 def main():
@@ -1260,6 +1388,25 @@ Examples:
         help='Save results to specified filename'
     )
     
+    # Key verification options
+    parser.add_argument(
+        '--show-results',
+        action='store_true',
+        help='Show all found keys with verification'
+    )
+    
+    parser.add_argument(
+        '--verify-key',
+        type=str,
+        help='Verify a specific private key and check balance'
+    )
+    
+    parser.add_argument(
+        '--export-results',
+        action='store_true',
+        help='Export all found keys to secure file'
+    )
+    
     args = parser.parse_args()
     
     try:
@@ -1307,6 +1454,52 @@ Examples:
             results = keyhound.academic_research_mode(args.research, {})
             print(f"\n{Fore.GREEN}Research Results:{Style.RESET_ALL}")
             print(json.dumps(results, indent=2))
+        
+        elif args.show_results:
+            print(f"\n{Fore.CYAN}🔍 Showing all found keys with verification...{Style.RESET_ALL}")
+            found_keys = keyhound.show_found_keys()
+            
+            if not found_keys:
+                print(f"{Fore.YELLOW}No found keys to display{Style.RESET_ALL}")
+            else:
+                print(f"\n{Fore.GREEN}Found {len(found_keys)} keys:{Style.RESET_ALL}")
+                for i, key_data in enumerate(found_keys, 1):
+                    print(f"\n[{i}] Key: {key_data.get('private_key', 'Unknown')[:16]}...")
+                    print(f"    Address: {key_data.get('bitcoin_address', 'Unknown')}")
+                    print(f"    Balance: {key_data.get('balance_btc', 0):.8f} BTC")
+                    print(f"    Type: {key_data.get('type', 'Unknown')}")
+                    if key_data.get('puzzle_id'):
+                        print(f"    Puzzle ID: {key_data.get('puzzle_id')}")
+                    if key_data.get('timestamp'):
+                        print(f"    Found: {key_data.get('timestamp')}")
+        
+        elif args.verify_key:
+            print(f"\n{Fore.CYAN}🔍 Verifying private key...{Style.RESET_ALL}")
+            result = keyhound.verify_found_key(args.verify_key)
+            
+            if "error" in result:
+                print(f"{Fore.RED}❌ Verification failed: {result['error']}{Style.RESET_ALL}")
+            else:
+                print(f"\n{Fore.GREEN}✅ Verification Results:{Style.RESET_ALL}")
+                print(f"Private Key: {result['private_key']}")
+                print(f"Bitcoin Address: {result['bitcoin_address']}")
+                print(f"Address Type: {result['address_type']}")
+                print(f"Balance: {result['balance_btc']:.8f} BTC")
+                print(f"Transactions: {result['transaction_count']}")
+                
+                if result['balance_btc'] > 0:
+                    print(f"\n{Fore.RED}🚨 IMPORTANT: This address contains {result['balance_btc']:.8f} BTC!")
+                    print(f"   Secure the private key immediately!")
+                    print(f"   Use a reputable wallet to import the key")
+        
+        elif args.export_results:
+            print(f"\n{Fore.CYAN}💾 Exporting all found keys...{Style.RESET_ALL}")
+            filename = keyhound.export_found_keys()
+            
+            if filename:
+                print(f"{Fore.GREEN}✅ Export completed: {filename}{Style.RESET_ALL}")
+            else:
+                print(f"{Fore.RED}❌ Export failed{Style.RESET_ALL}")
         
         else:
             # Interactive mode
