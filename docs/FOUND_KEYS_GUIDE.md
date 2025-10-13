@@ -37,17 +37,17 @@ Found keys are automatically saved in multiple locations:
 ### **Method 1: Command Line Interface**
 ```bash
 # View all found keys
-python keyhound_enhanced.py --show-results
+python keyhound/main.py --show-results
 
 # View specific puzzle results
-python keyhound_enhanced.py --show-puzzle 1
+python keyhound/main.py --show-puzzle 1
 
 # View brainwallet results
-python keyhound_enhanced.py --show-brainwallet-results
+python keyhound/main.py --show-brainwallet-results
 ```
 
 ### **Method 2: Web Interface**
-1. Start web interface: `python keyhound_enhanced.py --web`
+1. Start web interface: `python keyhound/main.py --web`
 2. Open browser: `http://localhost:5000`
 3. Navigate to "Results" tab
 4. View all found keys with details
@@ -223,19 +223,19 @@ Bitcoin Address: 1BgGZ9tcN4rm9KBzDn7KprQz87SZ26SAMH
 
 ```bash
 # View all found keys
-python keyhound_enhanced.py --show-results
+python keyhound/main.py --show-results
 
 # View specific puzzle
-python keyhound_enhanced.py --show-puzzle 1
+python keyhound/main.py --show-puzzle 1
 
 # Export found keys
-python keyhound_enhanced.py --export-results
+python keyhound/main.py --export-results
 
 # Check balance of address
-python keyhound_enhanced.py --check-balance 1BgGZ9tcN4rm9KBzDn7KprQz87SZ26SAMH
+python keyhound/main.py --check-balance 1BgGZ9tcN4rm9KBzDn7KprQz87SZ26SAMH
 
 # Start with result monitoring
-python keyhound_enhanced.py --web --monitor-results
+python keyhound/main.py --web --monitor-results
 ```
 
 ## 🏆 **Success Checklist**

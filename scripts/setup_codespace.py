@@ -84,9 +84,9 @@ def run_codespace_test():
     
     print("\\n🎉 Codespace test completed!")
     print("\\nNext steps:")
-    print("1. Start web interface: python keyhound_enhanced.py --web")
-    print("2. Start mobile app: python keyhound_enhanced.py --mobile")
-    print("3. Solve a puzzle: python keyhound_enhanced.py --puzzle 1")
+    print("1. Start web interface: python keyhound/main.py --web")
+    print("2. Start mobile app: python keyhound/main.py --mobile")
+    print("3. Solve a puzzle: python keyhound/main.py --puzzle 1")
 
 if __name__ == "__main__":
     run_codespace_test()
@@ -127,10 +127,10 @@ echo ""
 echo "🎯 KeyHound Enhanced is ready!"
 echo ""
 echo "Available commands:"
-echo "  python keyhound_enhanced.py --help"
-echo "  python keyhound_enhanced.py --web"
-echo "  python keyhound_enhanced.py --mobile"
-echo "  python keyhound_enhanced.py --puzzle 1"
+echo "  python keyhound/main.py --help"
+echo "  python keyhound/main.py --web"
+echo "  python keyhound/main.py --mobile"
+echo "  python keyhound/main.py --puzzle 1"
 echo ""
 echo "Access URLs (after starting services):"
 echo "  Web Interface: http://localhost:5000"
@@ -172,13 +172,13 @@ This repository is configured for GitHub Codespaces testing.
 3. **Start KeyHound Enhanced:**
    ```bash
    # Web interface
-   python keyhound_enhanced.py --web
+   python keyhound/main.py --web
    
    # Mobile app
-   python keyhound_enhanced.py --mobile
+   python keyhound/main.py --mobile
    
    # Solve a puzzle
-   python keyhound_enhanced.py --puzzle 1
+   python keyhound/main.py --puzzle 1
    ```
 
 ### 📊 Access Points
@@ -219,7 +219,7 @@ def main():
     print("=" * 60)
     
     # Check if we're in the right directory
-    if not Path("keyhound_enhanced.py").exists():
+    if not Path("keyhound/main.py").exists():
         print("❌ Please run this script from the KeyHound directory")
         return False
     
