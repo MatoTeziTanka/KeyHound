@@ -11,7 +11,7 @@ echo "=============================================="
 # FREE TIER Configuration
 PROJECT_NAME="keyhound-enhanced"
 INSTANCE_NAME="keyhound-free"
-ZONE="us-central1-a"
+ZONE="us-central1-b"
 MACHINE_TYPE="n1-standard-1"  # Minimal cost
 GPU_TYPE="nvidia-tesla-t4"    # FREE with your 30 hours/week
 GPU_COUNT=1
@@ -108,7 +108,7 @@ create_instance() {
         --restart-on-failure \
         --boot-disk-size=$DISK_SIZE \
         --boot-disk-type=pd-standard \
-        --image=ubuntu-2004-focal-v20241218 \
+        --image-family=ubuntu-2204-lts \
         --image-project=ubuntu-os-cloud \
         --metadata-from-file startup-script=startup_free_24hour.sh \
         --scopes=https://www.googleapis.com/auth/cloud-platform
@@ -138,7 +138,7 @@ echo "🎯 Cost: ~$1.20 for 24 hours (GPU is FREE!)"
 apt-get update -y
 
 # Install Python dependencies
-pip3 install --upgrade pip
+python3 -m pip install --upgrade pip
 pip3 install numpy pandas matplotlib seaborn plotly
 pip3 install ecdsa base58 pycryptodome
 pip3 install tensorflow-gpu keras
