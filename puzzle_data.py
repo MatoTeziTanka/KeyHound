@@ -139,3 +139,4 @@ if __name__ == "__main__":
             print(f"  Algorithm: BSGS (Baby-step Giant-step)")
         else:
             print(f"  Algorithm: Brute Force")
+
