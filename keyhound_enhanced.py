@@ -27,21 +27,21 @@ import colorama
 from colorama import Fore, Style
 import numpy as np
 
-# Import KeyHound modules
-from puzzle_data import BITCOIN_PUZZLES, get_brainwallet_patterns, hex_range_to_int_range
-from gpu_acceleration import GPUAccelerationManager, GPUConfig, GPUPerformanceMetrics
-from gpu_framework import GPUFrameworkManager, GPUDevice, GPUPerformanceMetrics as FrameworkMetrics
-from brainwallet_patterns import BrainwalletPatternLibrary, BrainwalletPattern, PatternMatch
-from bitcoin_cryptography import BitcoinCryptography, BitcoinAddress, CryptographyError
-from memory_optimization import MemoryOptimizer, StreamingKeyProcessor, get_memory_optimizer
-from configuration_manager import ConfigurationManager, get_config_manager, ConfigSchema, ConfigValidationRule
-from result_persistence import ResultPersistenceManager, get_result_persistence_manager, ResultType, StorageConfig, StorageBackend
-from performance_monitoring import PerformanceMonitor, get_performance_monitor, MetricType, AlertLevel
-from web_interface import KeyHoundWebInterface, create_web_interface, WebConfig
-from distributed_computing import DistributedComputingManager, create_distributed_manager, NodeRole, NetworkConfig, NetworkProtocol
-from machine_learning import MachineLearningManager, create_ml_manager, ModelType
-from mobile_app import KeyHoundMobileApp, create_mobile_app, MobileConfig
-from error_handling import (
+# Import KeyHound modules from new modular structure
+from src.core.puzzle_data import BITCOIN_PUZZLES, get_brainwallet_patterns, hex_range_to_int_range
+from src.gpu.gpu_acceleration import GPUAccelerationManager, GPUConfig, GPUPerformanceMetrics
+from src.gpu.gpu_framework import GPUFrameworkManager, GPUDevice, GPUPerformanceMetrics as FrameworkMetrics
+from src.core.brainwallet_patterns import BrainwalletPatternLibrary, BrainwalletPattern, PatternMatch
+from src.core.bitcoin_cryptography import BitcoinCryptography, BitcoinAddress, CryptographyError
+from src.core.memory_optimization import MemoryOptimizer, StreamingKeyProcessor, get_memory_optimizer
+from src.core.configuration_manager import ConfigurationManager, get_config_manager, ConfigSchema, ConfigValidationRule
+from src.core.result_persistence import ResultPersistenceManager, get_result_persistence_manager, ResultType, StorageConfig, StorageBackend
+from src.core.performance_monitoring import PerformanceMonitor, get_performance_monitor, MetricType, AlertLevel
+from src.web.web_interface import KeyHoundWebInterface, create_web_interface, WebConfig
+from src.distributed.distributed_computing import DistributedComputingManager, create_distributed_manager, NodeRole, NetworkConfig, NetworkProtocol
+from src.ml.machine_learning import MachineLearningManager, create_ml_manager, ModelType
+from src.web.mobile_app import KeyHoundMobileApp, create_mobile_app, MobileConfig
+from src.core.error_handling import (
     KeyHoundLogger, KeyHoundError, CryptographyError as KeyHoundCryptographyError,
     GPUError, PuzzleError, BrainwalletError, ConfigurationError,
     error_handler, performance_monitor

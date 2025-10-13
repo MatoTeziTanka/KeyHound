@@ -638,3 +638,4 @@ if __name__ == "__main__":
     library.export_patterns("brainwallet_patterns.json", "json")
     print("Patterns exported to brainwallet_patterns.json")
 
+
