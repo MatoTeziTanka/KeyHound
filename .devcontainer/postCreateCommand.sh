@@ -26,11 +26,15 @@ pip install cryptography>=3.4.8
 pip install PyYAML>=6.0.0
 pip install toml>=0.10.2
 
-# Install optional dependencies (lightweight versions)
+# Install optional dependencies (CPU-optimized versions)
 echo "🔬 Installing optional dependencies..."
 pip install scikit-learn>=1.3.0
 pip install nltk>=3.8.0
 pip install redis>=4.5.0
+
+# Note: GPU dependencies will be skipped in standard codespace
+echo "⚠️  GPU dependencies skipped (not available in standard codespace)"
+echo "   For GPU access, use Google Cloud with your free credits"
 
 # Install development tools
 echo "🛠️ Installing development tools..."
