@@ -107,7 +107,7 @@ create_instance() {
         --restart-on-failure \
         --boot-disk-size=$DISK_SIZE \
         --boot-disk-type=pd-standard \
-        --image-family=ubuntu-2004-lts \
+        --image=ubuntu-2004-focal-v20241218 \
         --image-project=ubuntu-os-cloud \
         --metadata-from-file startup-script=startup_24hour.sh \
         --scopes=https://www.googleapis.com/auth/cloud-platform
