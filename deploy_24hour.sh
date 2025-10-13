@@ -107,8 +107,8 @@ create_instance() {
         --restart-on-failure \
         --boot-disk-size=$DISK_SIZE \
         --boot-disk-type=pd-standard \
-        --image-family=pytorch-latest-gpu \
-        --image-project=deeplearning-platform-release \
+        --image-family=ubuntu-2004-lts \
+        --image-project=ubuntu-os-cloud \
         --metadata-from-file startup-script=startup_24hour.sh \
         --scopes=https://www.googleapis.com/auth/cloud-platform
     
