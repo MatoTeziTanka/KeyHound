@@ -39,6 +39,8 @@ from result_persistence import ResultPersistenceManager, get_result_persistence_
 from performance_monitoring import PerformanceMonitor, get_performance_monitor, MetricType, AlertLevel
 from web_interface import KeyHoundWebInterface, create_web_interface, WebConfig
 from distributed_computing import DistributedComputingManager, create_distributed_manager, NodeRole, NetworkConfig, NetworkProtocol
+from machine_learning import MachineLearningManager, create_ml_manager, ModelType
+from mobile_app import KeyHoundMobileApp, create_mobile_app, MobileConfig
 from error_handling import (
     KeyHoundLogger, KeyHoundError, CryptographyError as KeyHoundCryptographyError,
     GPUError, PuzzleError, BrainwalletError, ConfigurationError,
@@ -176,6 +178,37 @@ class KeyHoundEnhanced:
                 keyhound_logger.log_error(e)
                 self.distributed_manager = None
         
+        # Initialize machine learning manager (optional)
+        self.ml_manager = None
+        ml_enabled = self.config_manager.get("ml.enabled", False) if self.config_manager else False
+        if ml_enabled:
+            try:
+                ml_models_dir = self.config_manager.get("ml.models_dir", "./ml_models") if self.config_manager else "./ml_models"
+                self.ml_manager = create_ml_manager(ml_models_dir)
+                keyhound_logger.info("Machine learning manager initialized successfully")
+            except Exception as e:
+                keyhound_logger.log_error(e)
+                self.ml_manager = None
+        
+        # Initialize mobile app companion (optional)
+        self.mobile_app = None
+        mobile_enabled = self.config_manager.get("mobile.enabled", False) if self.config_manager else False
+        if mobile_enabled:
+            try:
+                mobile_config = MobileConfig(
+                    app_name=self.config_manager.get("mobile.app_name", "KeyHound Mobile") if self.config_manager else "KeyHound Mobile",
+                    version=self.config_manager.get("mobile.version", "1.0.0") if self.config_manager else "1.0.0",
+                    pwa_enabled=self.config_manager.get("mobile.pwa_enabled", True) if self.config_manager else True,
+                    offline_support=self.config_manager.get("mobile.offline_support", True) if self.config_manager else True,
+                    push_notifications=self.config_manager.get("mobile.push_notifications", True) if self.config_manager else True,
+                    theme=self.config_manager.get("mobile.theme", "dark") if self.config_manager else "dark"
+                )
+                self.mobile_app = create_mobile_app(self, mobile_config)
+                keyhound_logger.info("Mobile app companion initialized successfully")
+            except Exception as e:
+                keyhound_logger.log_error(e)
+                self.mobile_app = None
+        
         # Initialize GPU acceleration manager (legacy)
         self.gpu_manager = None
         if use_gpu:
@@ -282,6 +315,18 @@ class KeyHoundEnhanced:
             print(f"{Fore.GREEN}Distributed computing enabled: {network_stats.get('total_nodes', 0)} nodes{Style.RESET_ALL}")
             print(f"{Fore.GREEN}Node role: {network_stats.get('role', 'unknown').upper()}{Style.RESET_ALL}")
             print(f"{Fore.GREEN}Network protocol: {self.distributed_manager.config.protocol.value.upper()}{Style.RESET_ALL}")
+        
+        if self.ml_manager:
+            ml_stats = self.ml_manager.get_model_statistics()
+            print(f"{Fore.GREEN}Machine learning enabled: {ml_stats.get('total_models', 0)} models{Style.RESET_ALL}")
+            print(f"{Fore.GREEN}Feature extractors: {ml_stats.get('feature_extractors', 0)}{Style.RESET_ALL}")
+            print(f"{Fore.GREEN}Average accuracy: {ml_stats.get('average_accuracy', 0):.2%}{Style.RESET_ALL}")
+        
+        if self.mobile_app:
+            mobile_stats = self.mobile_app.get_mobile_statistics()
+            print(f"{Fore.GREEN}Mobile app enabled: {mobile_stats.get('app_name', 'KeyHound Mobile')}{Style.RESET_ALL}")
+            print(f"{Fore.GREEN}PWA support: {'enabled' if mobile_stats.get('pwa_enabled') else 'disabled'}{Style.RESET_ALL}")
+            print(f"{Fore.GREEN}Offline support: {'enabled' if mobile_stats.get('offline_support') else 'disabled'}{Style.RESET_ALL}")
     
     @error_handler(keyhound_logger)
     @performance_monitor(keyhound_logger)
@@ -1064,6 +1109,77 @@ class KeyHoundEnhanced:
             return self.distributed_manager.get_network_statistics()
         else:
             return {"error": "Distributed computing not enabled"}
+    
+    @error_handler(keyhound_logger)
+    def start_mobile_app(self, host: str = "0.0.0.0", port: int = 5001):
+        """Start mobile app if enabled."""
+        if self.mobile_app:
+            try:
+                print(f"{Fore.CYAN}Starting mobile app...{Style.RESET_ALL}")
+                self.mobile_app.start_mobile_app(host, port)
+            except Exception as e:
+                keyhound_logger.log_error(e)
+                print(f"{Fore.RED}Failed to start mobile app: {e}{Style.RESET_ALL}")
+        else:
+            print(f"{Fore.YELLOW}Mobile app not enabled{Style.RESET_ALL}")
+    
+    @error_handler(keyhound_logger)
+    def analyze_brainwallet_patterns_ml(self, patterns: List[str], target_address: str = None) -> Optional[Dict[str, Any]]:
+        """Analyze brainwallet patterns using machine learning."""
+        if self.ml_manager:
+            try:
+                analysis = self.ml_manager.analyze_brainwallet_patterns(patterns, target_address)
+                keyhound_logger.info(f"ML analysis completed: {len(patterns)} patterns analyzed")
+                return analysis
+            except Exception as e:
+                keyhound_logger.log_error(e)
+                return None
+        else:
+            keyhound_logger.warning("Machine learning not enabled")
+            return None
+    
+    @error_handler(keyhound_logger)
+    def optimize_puzzle_solving_ml(self, puzzle_data: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        """Optimize puzzle solving using machine learning."""
+        if self.ml_manager:
+            try:
+                optimization = self.ml_manager.optimize_puzzle_solving(puzzle_data)
+                keyhound_logger.info(f"ML optimization completed for puzzle {puzzle_data.get('puzzle_id', 'unknown')}")
+                return optimization
+            except Exception as e:
+                keyhound_logger.log_error(e)
+                return None
+        else:
+            keyhound_logger.warning("Machine learning not enabled")
+            return None
+    
+    @error_handler(keyhound_logger)
+    def send_mobile_notification(self, notification_type: str, title: str, message: str, data: Dict[str, Any] = None):
+        """Send mobile notification if mobile app is enabled."""
+        if self.mobile_app:
+            try:
+                from mobile_app import NotificationType
+                notif_type = NotificationType.INFO
+                
+                if notification_type == "error":
+                    notif_type = NotificationType.ERROR
+                elif notification_type == "warning":
+                    notif_type = NotificationType.WARNING
+                elif notification_type == "success":
+                    notif_type = NotificationType.SUCCESS
+                elif notification_type == "puzzle_solved":
+                    notif_type = NotificationType.PUZZLE_SOLVED
+                elif notification_type == "benchmark_complete":
+                    notif_type = NotificationType.BENCHMARK_COMPLETE
+                elif notification_type == "system_alert":
+                    notif_type = NotificationType.SYSTEM_ALERT
+                
+                self.mobile_app.send_mobile_notification(notif_type, title, message, data)
+                keyhound_logger.info(f"Mobile notification sent: {title}")
+            except Exception as e:
+                keyhound_logger.log_error(e)
+        else:
+            keyhound_logger.warning("Mobile app not enabled")
 
 
 def main():
