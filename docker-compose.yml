@@ -1,0 +1,123 @@
+# KeyHound Enhanced - Docker Compose Configuration
+# Professional multi-service deployment
+
+version: '3.8'
+
+services:
+  # Main KeyHound Enhanced application
+  keyhound-web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: gpu
+    container_name: keyhound-enhanced
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+      - ./results:/app/results
+      - ./config:/app/config
+    environment:
+      - KEYHOUND_CONFIG=config/docker.yaml
+      - KEYHOUND_LOG_LEVEL=INFO
+      - NVIDIA_VISIBLE_DEVICES=all
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    restart: unless-stopped
+    networks:
+      - keyhound-network
+
+  # Redis for distributed computing coordination
+  redis:
+    image: redis:7-alpine
+    container_name: keyhound-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    restart: unless-stopped
+    networks:
+      - keyhound-network
+
+  # PostgreSQL for production database
+  postgres:
+    image: postgres:15-alpine
+    container_name: keyhound-postgres
+    environment:
+      - POSTGRES_DB=keyhound
+      - POSTGRES_USER=keyhound
+      - POSTGRES_PASSWORD=change-this-password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    restart: unless-stopped
+    networks:
+      - keyhound-network
+
+  # Nginx reverse proxy
+  nginx:
+    image: nginx:alpine
+    container_name: keyhound-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./ssl:/etc/nginx/ssl
+    depends_on:
+      - keyhound-web
+    restart: unless-stopped
+    networks:
+      - keyhound-network
+
+  # Monitoring with Prometheus
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: keyhound-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+    restart: unless-stopped
+    networks:
+      - keyhound-network
+
+  # Grafana for visualization
+  grafana:
+    image: grafana/grafana:latest
+    container_name: keyhound-grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards
+      - ./monitoring/grafana/datasources:/etc/grafana/provisioning/datasources
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    restart: unless-stopped
+    networks:
+      - keyhound-network
+
+volumes:
+  redis-data:
+  postgres-data:
+  prometheus-data:
+  grafana-data:
+
+networks:
+  keyhound-network:
+    driver: bridge
