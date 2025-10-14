@@ -67,7 +67,7 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:5000/health || exit 1
 
 # Default command
-CMD ["python3", "keyhound/main.py", "--web", "--config", "config/environments/production.yaml"]
+CMD ["python3", "main.py", "--web", "--config", "config/environments/production.yaml"]
 
 # Stage 4: GPU-optimized version
 FROM application AS gpu
@@ -78,4 +78,4 @@ RUN pip3 install --no-cache-dir torch torchvision torchaudio --index-url https:/
 USER keyhound
 
 # Override command for GPU usage
-CMD ["python3", "keyhound/main.py", "--web", "--gpu", "--config", "config/environments/production.yaml"]
+CMD ["python3", "main.py", "--web", "--gpu", "--config", "config/environments/production.yaml"]

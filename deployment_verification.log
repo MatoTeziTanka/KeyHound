@@ -1,0 +1,105 @@
+2025-10-13 21:29:03,274 - INFO - Starting deployment verification from: C:\Users\sethp\Documents\GitHub\KeyHound
+2025-10-13 21:29:03,275 - INFO - [START] Starting comprehensive deployment verification...
+2025-10-13 21:29:03,275 - INFO - ============================================================
+2025-10-13 21:29:03,275 - INFO - [DOCKER] Verifying Docker deployment...
+2025-10-13 21:29:03,431 - INFO - [COLAB] Verifying Google Colab deployment...
+2025-10-13 21:29:03,432 - INFO - [LOCAL] Verifying local deployment...
+2025-10-13 21:29:03,496 - [32mINFO[0m - KeyHound logger initialized: ConfigurationManager
+2025-10-13 21:29:03,578 - [32mINFO[0m - KeyHound logger initialized: MemoryOptimization
+2025-10-13 21:29:03,584 - [32mINFO[0m - KeyHound logger initialized: PerformanceMonitoring
+2025-10-13 21:29:03,593 - [32mINFO[0m - KeyHound logger initialized: ResultPersistence
+2025-10-13 21:29:03,597 - WARNING - Missing dependencies: ['ripemd160']
+2025-10-13 21:29:03,598 - WARNING - Some features may not be available
+2025-10-13 21:29:03,598 - INFO - Bitcoin cryptography module initialized successfully
+2025-10-13 21:29:03,598 - INFO - Loading brainwallet patterns...
+2025-10-13 21:29:03,598 - INFO - Generating pattern variations...
+2025-10-13 21:29:03,605 - INFO - Generated 4758 pattern variations
+2025-10-13 21:29:03,605 - INFO - Loaded 5025 brainwallet patterns
+2025-10-13 21:29:03,606 - INFO - Building pattern indices...
+2025-10-13 21:29:03,607 - INFO - Pattern indices built successfully
+2025-10-13 21:29:03,607 - INFO - SimpleKeyHound initialized successfully
+2025-10-13 21:29:03,686 - INFO - [CLOUD] Verifying cloud deployment configurations...
+2025-10-13 21:29:03,687 - INFO - [CONFIG] Verifying configuration files...
+2025-10-13 21:29:03,698 - INFO - 
+============================================================
+2025-10-13 21:29:03,699 - INFO - [RESULTS] DEPLOYMENT VERIFICATION RESULTS
+2025-10-13 21:29:03,699 - INFO - ============================================================
+2025-10-13 21:29:03,699 - INFO - [SUCCESS] Docker: Docker deployment configuration valid
+2025-10-13 21:29:03,699 - INFO -    Duration: 0.16s
+2025-10-13 21:29:03,699 - INFO -    Details: {
+  "dockerfile_exists": true,
+  "compose_exists": true,
+  "missing_stages": [],
+  "missing_services": [],
+  "docker_available": true
+}
+2025-10-13 21:29:03,699 - INFO - [SUCCESS] Google Colab: Colab notebook valid (found keywords: ['KeyHound', 'setup', 'dependencies'])
+2025-10-13 21:29:03,699 - INFO -    Duration: 0.00s
+2025-10-13 21:29:03,699 - INFO -    Details: {
+  "notebook_exists": true,
+  "valid_json": true,
+  "found_keywords": [
+    "KeyHound",
+    "setup",
+    "dependencies"
+  ],
+  "cell_count": 2
+}
+2025-10-13 21:29:03,699 - INFO - [SUCCESS] Local Development: Local deployment ready
+2025-10-13 21:29:03,699 - INFO -    Duration: 0.25s
+2025-10-13 21:29:03,699 - INFO -    Details: {
+  "essential_files_missing": [],
+  "import_errors": [],
+  "functionality_works": true,
+  "python_version": "3.13.7 (tags/v3.13.7:bcee1c3, Aug 14 2025, 14:15:11) [MSC v.1944 64 bit (AMD64)]"
+}
+2025-10-13 21:29:03,699 - INFO - [WARNING] Cloud AWS: Cloud AWS deployment configured (missing: ['Dockerfile', 'docker-compose.yml', 'terraform.tf'])
+2025-10-13 21:29:03,699 - INFO -    Duration: 0.00s
+2025-10-13 21:29:03,699 - INFO -    Details: {
+  "files_found": [],
+  "files_missing": [
+    "Dockerfile",
+    "docker-compose.yml",
+    "terraform.tf"
+  ],
+  "directory_exists": true
+}
+2025-10-13 21:29:03,699 - INFO - [WARNING] Cloud AZURE: Cloud AZURE deployment configured (missing: ['Dockerfile', 'docker-compose.yml', 'azure-pipelines.yml'])
+2025-10-13 21:29:03,699 - INFO -    Duration: 0.00s
+2025-10-13 21:29:03,699 - INFO -    Details: {
+  "files_found": [],
+  "files_missing": [
+    "Dockerfile",
+    "docker-compose.yml",
+    "azure-pipelines.yml"
+  ],
+  "directory_exists": true
+}
+2025-10-13 21:29:03,699 - INFO - [WARNING] Cloud GCP: Cloud GCP deployment configured (missing: ['Dockerfile', 'docker-compose.yml', 'cloudbuild.yaml'])
+2025-10-13 21:29:03,700 - INFO -    Duration: 0.00s
+2025-10-13 21:29:03,700 - INFO -    Details: {
+  "files_found": [],
+  "files_missing": [
+    "Dockerfile",
+    "docker-compose.yml",
+    "cloudbuild.yaml"
+  ],
+  "directory_exists": true
+}
+2025-10-13 21:29:03,700 - INFO - [SUCCESS] Configuration Files: Configuration validation completed
+2025-10-13 21:29:03,700 - INFO -    Duration: 0.01s
+2025-10-13 21:29:03,700 - INFO -    Details: {
+  "valid_configs": [
+    "config/default.yaml",
+    "config/environments/production.yaml",
+    "config/environments/docker.yaml",
+    "config/environments/colab.yaml"
+  ],
+  "invalid_configs": [],
+  "total_checked": 4
+}
+2025-10-13 21:29:03,700 - INFO - 
+============================================================
+2025-10-13 21:29:03,700 - INFO - [SUMMARY] 4 successful, 3 warnings, 0 errors
+2025-10-13 21:29:03,700 - INFO - [TIME] Total time: 0.43s
+2025-10-13 21:29:03,700 - INFO - ============================================================

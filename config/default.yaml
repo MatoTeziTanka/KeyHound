@@ -50,9 +50,9 @@ distributed:
 
 # Security
 security:
-  enable_authentication: false
-  session_timeout_minutes: 60
-  max_login_attempts: 5
+  enable_authentication: true
+  session_timeout_minutes: 30
+  max_login_attempts: 3
 
 # Logging
 logging:
@@ -65,5 +65,5 @@ logging:
 results:
   directory: "results"
   backup_directory: "results/backups"
-  encryption_enabled: false
+  encryption_enabled: true
   compression_enabled: true

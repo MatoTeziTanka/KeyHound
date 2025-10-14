@@ -1,0 +1,708 @@
+2025-10-13 21:31:38,589 - INFO - Starting security review from: C:\Users\sethp\Documents\GitHub\KeyHound
+2025-10-13 21:31:38,590 - INFO - Starting comprehensive security review...
+2025-10-13 21:31:38,590 - INFO - ============================================================
+2025-10-13 21:31:38,590 - INFO - [SECURITY] Checking API key protection...
+2025-10-13 21:31:38,805 - INFO - [SECURITY] Checking input validation...
+2025-10-13 21:31:38,929 - INFO - [SECURITY] Checking authentication security...
+2025-10-13 21:31:38,959 - INFO - [SECURITY] Checking encryption and storage...
+2025-10-13 21:31:38,968 - INFO - [SECURITY] Checking file permissions...
+2025-10-13 21:31:38,979 - INFO - [SECURITY] Checking dependencies...
+2025-10-13 21:31:38,979 - INFO - [SECURITY] Checking logging security...
+2025-10-13 21:31:39,024 - INFO - 
+============================================================
+2025-10-13 21:31:39,025 - INFO - SECURITY REVIEW RESULTS
+2025-10-13 21:31:39,025 - INFO - ============================================================
+2025-10-13 21:31:39,025 - INFO - Overall Security Status: CRITICAL
+2025-10-13 21:31:39,025 - INFO - Total Issues Found: 170
+2025-10-13 21:31:39,025 - INFO - Severity Breakdown: {'critical': 0, 'high': 101, 'medium': 64, 'low': 3, 'info': 2}
+2025-10-13 21:31:39,025 - INFO - Category Breakdown: {'authentication': 7, 'validation': 113, 'encryption': 4, 'dependencies': 2, 'logging': 44}
+2025-10-13 21:31:39,025 - INFO - 
+HIGH ISSUES (101):
+2025-10-13 21:31:39,025 - INFO -   [authentication] tests\keyhound_codespace.py:150
+2025-10-13 21:31:39,025 - INFO -     Potential hardcoded secret found: private_key = "0000000000000000000000000000000000000000000000000000000000000001"
+2025-10-13 21:31:39,025 - INFO -     Recommendation: Use environment variables or secure configuration files
+2025-10-13 21:31:39,025 - INFO -     CWE: CWE-798
+2025-10-13 21:31:39,025 - INFO -   [authentication] tests\keyhound_codespace.py:150
+2025-10-13 21:31:39,025 - INFO -     Potential hardcoded secret found: private_key = "0000000000000000000000000000000000000000000000000000000000000001"
+2025-10-13 21:31:39,025 - INFO -     Recommendation: Use environment variables or secure configuration files
+2025-10-13 21:31:39,025 - INFO -     CWE: CWE-798
+2025-10-13 21:31:39,025 - INFO -   [authentication] tests\test_keyhound_enhanced.py:55
+2025-10-13 21:31:39,025 - INFO -     Potential hardcoded secret found: self.test_private_key = "1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef"
+2025-10-13 21:31:39,025 - INFO -     Recommendation: Use environment variables or secure configuration files
+2025-10-13 21:31:39,026 - INFO -     CWE: CWE-798
+2025-10-13 21:31:39,026 - INFO -   [authentication] tests\test_keyhound_enhanced.py:55
+2025-10-13 21:31:39,026 - INFO -     Potential hardcoded secret found: self.test_private_key = "1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef"
+2025-10-13 21:31:39,026 - INFO -     Recommendation: Use environment variables or secure configuration files
+2025-10-13 21:31:39,026 - INFO -     CWE: CWE-798
+2025-10-13 21:31:39,026 - INFO -   [validation] core\error_handling.py:67
+2025-10-13 21:31:39,026 - INFO -     Dangerous function usage: exec
+2025-10-13 21:31:39,026 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,026 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,026 - INFO -   [validation] core\error_handling.py:296
+2025-10-13 21:31:39,026 - INFO -     Dangerous function usage: exec
+2025-10-13 21:31:39,026 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,026 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,026 - INFO -   [validation] core\error_handling.py:304
+2025-10-13 21:31:39,026 - INFO -     Dangerous function usage: exec
+2025-10-13 21:31:39,026 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,026 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,026 - INFO -   [validation] core\error_handling.py:313
+2025-10-13 21:31:39,026 - INFO -     Dangerous function usage: exec
+2025-10-13 21:31:39,026 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,026 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,026 - INFO -   [validation] core\error_handling.py:330
+2025-10-13 21:31:39,027 - INFO -     Dangerous function usage: exec
+2025-10-13 21:31:39,027 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,027 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,027 - INFO -   [validation] core\error_handling.py:333
+2025-10-13 21:31:39,027 - INFO -     Dangerous function usage: exec
+2025-10-13 21:31:39,027 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,027 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,027 - INFO -   [validation] core\error_handling.py:372
+2025-10-13 21:31:39,027 - INFO -     Dangerous function usage: exec
+2025-10-13 21:31:39,027 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,027 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,027 - INFO -   [validation] core\error_handling.py:379
+2025-10-13 21:31:39,027 - INFO -     Dangerous function usage: exec
+2025-10-13 21:31:39,027 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,027 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,027 - INFO -   [validation] core\error_handling.py:380
+2025-10-13 21:31:39,027 - INFO -     Dangerous function usage: exec
+2025-10-13 21:31:39,028 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,028 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,028 - INFO -   [validation] core\error_handling.py:381
+2025-10-13 21:31:39,028 - INFO -     Dangerous function usage: exec
+2025-10-13 21:31:39,028 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,028 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,028 - INFO -   [validation] core\error_handling.py:382
+2025-10-13 21:31:39,028 - INFO -     Dangerous function usage: exec
+2025-10-13 21:31:39,028 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,028 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,028 - INFO -   [validation] core\error_handling.py:389
+2025-10-13 21:31:39,028 - INFO -     Dangerous function usage: exec
+2025-10-13 21:31:39,028 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,028 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,029 - INFO -   [validation] core\error_handling.py:390
+2025-10-13 21:31:39,029 - INFO -     Dangerous function usage: exec
+2025-10-13 21:31:39,029 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,029 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,029 - INFO -   [validation] core\error_handling.py:391
+2025-10-13 21:31:39,029 - INFO -     Dangerous function usage: exec
+2025-10-13 21:31:39,029 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,029 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,029 - INFO -   [validation] core\error_handling.py:427
+2025-10-13 21:31:39,029 - INFO -     Dangerous function usage: exec
+2025-10-13 21:31:39,029 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,029 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,029 - INFO -   [validation] core\error_handling.py:431
+2025-10-13 21:31:39,029 - INFO -     Dangerous function usage: exec
+2025-10-13 21:31:39,029 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,029 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,030 - INFO -   [validation] core\error_handling.py:506
+2025-10-13 21:31:39,030 - INFO -     Dangerous function usage: exec
+2025-10-13 21:31:39,030 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,030 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,030 - INFO -   [validation] core\error_handling.py:509
+2025-10-13 21:31:39,030 - INFO -     Dangerous function usage: exec
+2025-10-13 21:31:39,030 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,030 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,030 - INFO -   [validation] core\performance_monitoring.py:180
+2025-10-13 21:31:39,030 - INFO -     Dangerous function usage: exec
+2025-10-13 21:31:39,030 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,030 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,030 - INFO -   [validation] core\performance_monitoring.py:193
+2025-10-13 21:31:39,031 - INFO -     Dangerous function usage: exec
+2025-10-13 21:31:39,031 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,031 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,031 - INFO -   [validation] core\performance_monitoring.py:210
+2025-10-13 21:31:39,031 - INFO -     Dangerous function usage: exec
+2025-10-13 21:31:39,031 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,031 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,031 - INFO -   [validation] core\performance_monitoring.py:225
+2025-10-13 21:31:39,031 - INFO -     Dangerous function usage: exec
+2025-10-13 21:31:39,031 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,031 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,031 - INFO -   [validation] core\performance_monitoring.py:226
+2025-10-13 21:31:39,031 - INFO -     Dangerous function usage: exec
+2025-10-13 21:31:39,031 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,031 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,031 - INFO -   [validation] core\performance_monitoring.py:227
+2025-10-13 21:31:39,031 - INFO -     Dangerous function usage: exec
+2025-10-13 21:31:39,031 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,031 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,031 - INFO -   [validation] core\performance_monitoring.py:228
+2025-10-13 21:31:39,031 - INFO -     Dangerous function usage: exec
+2025-10-13 21:31:39,032 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,032 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,032 - INFO -   [validation] core\performance_monitoring.py:325
+2025-10-13 21:31:39,032 - INFO -     Dangerous function usage: exec
+2025-10-13 21:31:39,032 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,032 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,032 - INFO -   [validation] core\performance_monitoring.py:398
+2025-10-13 21:31:39,032 - INFO -     Dangerous function usage: exec
+2025-10-13 21:31:39,032 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,032 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,032 - INFO -   [validation] core\performance_monitoring.py:517
+2025-10-13 21:31:39,032 - INFO -     Dangerous function usage: exec
+2025-10-13 21:31:39,032 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,032 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,032 - INFO -   [validation] core\performance_monitoring.py:581
+2025-10-13 21:31:39,032 - INFO -     Dangerous function usage: exec
+2025-10-13 21:31:39,032 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,032 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,032 - INFO -   [validation] core\performance_monitoring.py:603
+2025-10-13 21:31:39,033 - INFO -     Dangerous function usage: exec
+2025-10-13 21:31:39,033 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,033 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,033 - INFO -   [validation] core\result_persistence.py:196
+2025-10-13 21:31:39,033 - INFO -     Dangerous function usage: exec
+2025-10-13 21:31:39,033 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,033 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,033 - INFO -   [validation] core\result_persistence.py:207
+2025-10-13 21:31:39,033 - INFO -     Dangerous function usage: exec
+2025-10-13 21:31:39,033 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,033 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,033 - INFO -   [validation] core\result_persistence.py:211
+2025-10-13 21:31:39,033 - INFO -     Dangerous function usage: exec
+2025-10-13 21:31:39,033 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,033 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,034 - INFO -   [validation] core\result_persistence.py:378
+2025-10-13 21:31:39,034 - INFO -     Dangerous function usage: exec
+2025-10-13 21:31:39,034 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,034 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,034 - INFO -   [validation] core\result_persistence.py:485
+2025-10-13 21:31:39,034 - INFO -     Dangerous function usage: exec
+2025-10-13 21:31:39,034 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,034 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,034 - INFO -   [validation] core\result_persistence.py:606
+2025-10-13 21:31:39,034 - INFO -     Dangerous function usage: exec
+2025-10-13 21:31:39,034 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,034 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,034 - INFO -   [validation] core\result_persistence.py:810
+2025-10-13 21:31:39,034 - INFO -     Dangerous function usage: exec
+2025-10-13 21:31:39,034 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,034 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,034 - INFO -   [validation] distributed\distributed_computing.py:525
+2025-10-13 21:31:39,034 - INFO -     Dangerous function usage: exec
+2025-10-13 21:31:39,034 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,034 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,035 - INFO -   [validation] gpu\gpu_acceleration.py:71
+2025-10-13 21:31:39,035 - INFO -     Dangerous function usage: exec
+2025-10-13 21:31:39,035 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,035 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,035 - INFO -   [validation] gpu\gpu_acceleration.py:396
+2025-10-13 21:31:39,035 - INFO -     Dangerous function usage: exec
+2025-10-13 21:31:39,035 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,035 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,035 - INFO -   [validation] gpu\gpu_acceleration.py:397
+2025-10-13 21:31:39,035 - INFO -     Dangerous function usage: exec
+2025-10-13 21:31:39,035 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,035 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,035 - INFO -   [validation] gpu\gpu_acceleration.py:407
+2025-10-13 21:31:39,035 - INFO -     Dangerous function usage: exec
+2025-10-13 21:31:39,035 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,035 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,035 - INFO -   [validation] gpu\gpu_acceleration.py:426
+2025-10-13 21:31:39,035 - INFO -     Dangerous function usage: exec
+2025-10-13 21:31:39,035 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,035 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,035 - INFO -   [validation] gpu\gpu_framework.py:90
+2025-10-13 21:31:39,035 - INFO -     Dangerous function usage: exec
+2025-10-13 21:31:39,036 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,036 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,036 - INFO -   [validation] gpu\gpu_framework.py:92
+2025-10-13 21:31:39,036 - INFO -     Dangerous function usage: exec
+2025-10-13 21:31:39,036 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,036 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,036 - INFO -   [validation] gpu\gpu_framework.py:307
+2025-10-13 21:31:39,036 - INFO -     Dangerous function usage: exec
+2025-10-13 21:31:39,036 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,036 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,036 - INFO -   [validation] gpu\gpu_framework.py:308
+2025-10-13 21:31:39,036 - INFO -     Dangerous function usage: exec
+2025-10-13 21:31:39,036 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,036 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,036 - INFO -   [validation] gpu\gpu_framework.py:312
+2025-10-13 21:31:39,036 - INFO -     Dangerous function usage: exec
+2025-10-13 21:31:39,036 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,036 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,036 - INFO -   [validation] gpu\gpu_framework.py:319
+2025-10-13 21:31:39,037 - INFO -     Dangerous function usage: exec
+2025-10-13 21:31:39,037 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,037 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,037 - INFO -   [validation] gpu\gpu_framework.py:320
+2025-10-13 21:31:39,037 - INFO -     Dangerous function usage: exec
+2025-10-13 21:31:39,037 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,037 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,037 - INFO -   [validation] gpu\gpu_framework.py:321
+2025-10-13 21:31:39,037 - INFO -     Dangerous function usage: exec
+2025-10-13 21:31:39,037 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,037 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,037 - INFO -   [validation] gpu\gpu_framework.py:418
+2025-10-13 21:31:39,037 - INFO -     Dangerous function usage: compile
+2025-10-13 21:31:39,037 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,037 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,037 - INFO -   [validation] gpu\gpu_framework.py:430
+2025-10-13 21:31:39,037 - INFO -     Dangerous function usage: compile
+2025-10-13 21:31:39,037 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,037 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,038 - INFO -   [validation] gpu\gpu_framework.py:563
+2025-10-13 21:31:39,038 - INFO -     Dangerous function usage: exec
+2025-10-13 21:31:39,038 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,038 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,038 - INFO -   [validation] gpu\gpu_framework.py:564
+2025-10-13 21:31:39,038 - INFO -     Dangerous function usage: exec
+2025-10-13 21:31:39,038 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,038 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,038 - INFO -   [validation] gpu\gpu_framework.py:568
+2025-10-13 21:31:39,038 - INFO -     Dangerous function usage: exec
+2025-10-13 21:31:39,038 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,038 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,038 - INFO -   [validation] gpu\gpu_framework.py:575
+2025-10-13 21:31:39,038 - INFO -     Dangerous function usage: exec
+2025-10-13 21:31:39,038 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,039 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,039 - INFO -   [validation] gpu\gpu_framework.py:576
+2025-10-13 21:31:39,039 - INFO -     Dangerous function usage: exec
+2025-10-13 21:31:39,039 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,039 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,039 - INFO -   [validation] gpu\gpu_framework.py:577
+2025-10-13 21:31:39,039 - INFO -     Dangerous function usage: exec
+2025-10-13 21:31:39,039 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,039 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,039 - INFO -   [validation] ml\machine_learning.py:539
+2025-10-13 21:31:39,039 - INFO -     Dangerous function usage: compile
+2025-10-13 21:31:39,039 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,039 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,039 - INFO -   [validation] ml\machine_learning.py:561
+2025-10-13 21:31:39,039 - INFO -     Dangerous function usage: eval
+2025-10-13 21:31:39,039 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,039 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,039 - INFO -   [validation] scripts\security_review.py:76
+2025-10-13 21:31:39,040 - INFO -     Dangerous function usage: eval
+2025-10-13 21:31:39,040 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,040 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,040 - INFO -   [validation] scripts\security_review.py:76
+2025-10-13 21:31:39,040 - INFO -     Dangerous function usage: exec
+2025-10-13 21:31:39,040 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,040 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,040 - INFO -   [validation] scripts\security_review.py:76
+2025-10-13 21:31:39,040 - INFO -     Dangerous function usage: compile
+2025-10-13 21:31:39,040 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,040 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,040 - INFO -   [validation] scripts\security_review.py:76
+2025-10-13 21:31:39,040 - INFO -     Dangerous function usage: __import__
+2025-10-13 21:31:39,040 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,040 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,040 - INFO -   [validation] scripts\security_review.py:77
+2025-10-13 21:31:39,040 - INFO -     Dangerous function usage: subprocess.call
+2025-10-13 21:31:39,040 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,040 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,040 - INFO -   [validation] scripts\security_review.py:77
+2025-10-13 21:31:39,040 - INFO -     Dangerous function usage: os.system
+2025-10-13 21:31:39,041 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,041 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,041 - INFO -   [validation] scripts\security_review.py:77
+2025-10-13 21:31:39,041 - INFO -     Dangerous function usage: shell=True
+2025-10-13 21:31:39,041 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,041 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,041 - INFO -   [validation] scripts\setup_codespace.py:60
+2025-10-13 21:31:39,041 - INFO -     Dangerous function usage: exec
+2025-10-13 21:31:39,041 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,041 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,041 - INFO -   [validation] scripts\setup_codespace.py:67
+2025-10-13 21:31:39,041 - INFO -     Dangerous function usage: exec
+2025-10-13 21:31:39,041 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,041 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,041 - INFO -   [validation] scripts\setup_codespace.py:72
+2025-10-13 21:31:39,041 - INFO -     Dangerous function usage: exec
+2025-10-13 21:31:39,042 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,042 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,042 - INFO -   [validation] scripts\setup_github_cli.py:31
+2025-10-13 21:31:39,042 - INFO -     Dangerous function usage: shell=True
+2025-10-13 21:31:39,042 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,042 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,042 - INFO -   [validation] scripts\setup_github_cli.py:34
+2025-10-13 21:31:39,042 - INFO -     Dangerous function usage: shell=True
+2025-10-13 21:31:39,042 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,042 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,042 - INFO -   [validation] scripts\setup_github_simple.py:18
+2025-10-13 21:31:39,042 - INFO -     Dangerous function usage: shell=True
+2025-10-13 21:31:39,042 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,042 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,042 - INFO -   [validation] scripts\setup_github_simple.py:21
+2025-10-13 21:31:39,042 - INFO -     Dangerous function usage: shell=True
+2025-10-13 21:31:39,042 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,042 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,042 - INFO -   [validation] scripts\setup_github_with_api_keys.py:37
+2025-10-13 21:31:39,042 - INFO -     Dangerous function usage: shell=True
+2025-10-13 21:31:39,042 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,042 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,043 - INFO -   [validation] scripts\setup_github_with_api_keys.py:40
+2025-10-13 21:31:39,043 - INFO -     Dangerous function usage: shell=True
+2025-10-13 21:31:39,043 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,043 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,043 - INFO -   [validation] scripts\setup_keyhound.py:36
+2025-10-13 21:31:39,043 - INFO -     Dangerous function usage: exec
+2025-10-13 21:31:39,043 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,043 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,043 - INFO -   [validation] scripts\setup_keyhound.py:64
+2025-10-13 21:31:39,043 - INFO -     Dangerous function usage: exec
+2025-10-13 21:31:39,043 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,043 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,043 - INFO -   [validation] tests\simple_functionality_test.py:42
+2025-10-13 21:31:39,043 - INFO -     Dangerous function usage: exec
+2025-10-13 21:31:39,043 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,043 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,043 - INFO -   [validation] tests\simple_functionality_test.py:43
+2025-10-13 21:31:39,043 - INFO -     Dangerous function usage: exec
+2025-10-13 21:31:39,043 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,043 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,043 - INFO -   [validation] tests\simple_functionality_test.py:58
+2025-10-13 21:31:39,043 - INFO -     Dangerous function usage: exec
+2025-10-13 21:31:39,043 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,044 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,044 - INFO -   [validation] tests\simple_functionality_test.py:58
+2025-10-13 21:31:39,044 - INFO -     Dangerous function usage: compile
+2025-10-13 21:31:39,044 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,044 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,044 - INFO -   [validation] tests\simple_functionality_test.py:119
+2025-10-13 21:31:39,044 - INFO -     Dangerous function usage: exec
+2025-10-13 21:31:39,044 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,044 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,044 - INFO -   [validation] tests\simple_functionality_test.py:119
+2025-10-13 21:31:39,044 - INFO -     Dangerous function usage: compile
+2025-10-13 21:31:39,044 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,044 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,044 - INFO -   [validation] tests\test_config.py:448
+2025-10-13 21:31:39,044 - INFO -     Dangerous function usage: exec
+2025-10-13 21:31:39,044 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,044 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,044 - INFO -   [validation] tests\test_dependencies.py:35
+2025-10-13 21:31:39,044 - INFO -     Dangerous function usage: __import__
+2025-10-13 21:31:39,044 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,044 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,044 - INFO -   [validation] tests\test_dependencies.py:77
+2025-10-13 21:31:39,044 - INFO -     Dangerous function usage: __import__
+2025-10-13 21:31:39,045 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,045 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,045 - INFO -   [validation] tests\test_keyhound_enhanced.py:188
+2025-10-13 21:31:39,045 - INFO -     Dangerous function usage: exec
+2025-10-13 21:31:39,045 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,045 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,045 - INFO -   [validation] tests\test_keyhound_enhanced.py:198
+2025-10-13 21:31:39,045 - INFO -     Dangerous function usage: exec
+2025-10-13 21:31:39,045 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,045 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,045 - INFO -   [validation] tests\test_keyhound_enhanced.py:242
+2025-10-13 21:31:39,045 - INFO -     Dangerous function usage: eval
+2025-10-13 21:31:39,045 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,045 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,045 - INFO -   [validation] tests\test_keyhound_enhanced.py:279
+2025-10-13 21:31:39,045 - INFO -     Dangerous function usage: exec
+2025-10-13 21:31:39,045 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,045 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,045 - INFO -   [validation] tests\test_keyhound_enhanced.py:371
+2025-10-13 21:31:39,045 - INFO -     Dangerous function usage: exec
+2025-10-13 21:31:39,045 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,045 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,045 - INFO -   [validation] tests\test_keyhound_enhanced.py:387
+2025-10-13 21:31:39,046 - INFO -     Dangerous function usage: exec
+2025-10-13 21:31:39,046 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,046 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,046 - INFO -   [validation] tests\test_keyhound_enhanced.py:486
+2025-10-13 21:31:39,046 - INFO -     Dangerous function usage: exec
+2025-10-13 21:31:39,046 - INFO -     Recommendation: Use safer alternatives and validate all inputs
+2025-10-13 21:31:39,046 - INFO -     CWE: CWE-78
+2025-10-13 21:31:39,046 - INFO -   [authentication] config/environments/production.yaml:0
+2025-10-13 21:31:39,046 - INFO -     Default or placeholder secret key detected
+2025-10-13 21:31:39,046 - INFO -     Recommendation: Use a strong, unique secret key in production
+2025-10-13 21:31:39,046 - INFO -     CWE: CWE-798
+2025-10-13 21:31:39,046 - INFO -   [authentication] config/environments/docker.yaml:0
+2025-10-13 21:31:39,046 - INFO -     Default or placeholder secret key detected
+2025-10-13 21:31:39,046 - INFO -     Recommendation: Use a strong, unique secret key in production
+2025-10-13 21:31:39,046 - INFO -     CWE: CWE-798
+2025-10-13 21:31:39,046 - INFO - 
+MEDIUM ISSUES (64):
+2025-10-13 21:31:39,046 - INFO -   [validation] core\performance_monitoring.py:326
+2025-10-13 21:31:39,046 - INFO -     Potential SQL injection vulnerability
+2025-10-13 21:31:39,046 - INFO -     Recommendation: Use parameterized queries
+2025-10-13 21:31:39,046 - INFO -     CWE: CWE-89
+2025-10-13 21:31:39,046 - INFO -   [validation] core\performance_monitoring.py:399
+2025-10-13 21:31:39,046 - INFO -     Potential SQL injection vulnerability
+2025-10-13 21:31:39,047 - INFO -     Recommendation: Use parameterized queries
+2025-10-13 21:31:39,047 - INFO -     CWE: CWE-89
+2025-10-13 21:31:39,047 - INFO -   [validation] core\performance_monitoring.py:518
+2025-10-13 21:31:39,047 - INFO -     Potential SQL injection vulnerability
+2025-10-13 21:31:39,047 - INFO -     Recommendation: Use parameterized queries
+2025-10-13 21:31:39,047 - INFO -     CWE: CWE-89
+2025-10-13 21:31:39,047 - INFO -   [validation] core\performance_monitoring.py:582
+2025-10-13 21:31:39,047 - INFO -     Potential SQL injection vulnerability
+2025-10-13 21:31:39,047 - INFO -     Recommendation: Use parameterized queries
+2025-10-13 21:31:39,047 - INFO -     CWE: CWE-89
+2025-10-13 21:31:39,047 - INFO -   [validation] core\performance_monitoring.py:604
+2025-10-13 21:31:39,047 - INFO -     Potential SQL injection vulnerability
+2025-10-13 21:31:39,047 - INFO -     Recommendation: Use parameterized queries
+2025-10-13 21:31:39,047 - INFO -     CWE: CWE-89
+2025-10-13 21:31:39,047 - INFO -   [validation] core\result_persistence.py:379
+2025-10-13 21:31:39,047 - INFO -     Potential SQL injection vulnerability
+2025-10-13 21:31:39,047 - INFO -     Recommendation: Use parameterized queries
+2025-10-13 21:31:39,047 - INFO -     CWE: CWE-89
+2025-10-13 21:31:39,047 - INFO -   [validation] core\result_persistence.py:570
+2025-10-13 21:31:39,047 - INFO -     Potential SQL injection vulnerability
+2025-10-13 21:31:39,047 - INFO -     Recommendation: Use parameterized queries
+2025-10-13 21:31:39,047 - INFO -     CWE: CWE-89
+2025-10-13 21:31:39,048 - INFO -   [validation] core\result_persistence.py:578
+2025-10-13 21:31:39,048 - INFO -     Potential SQL injection vulnerability
+2025-10-13 21:31:39,048 - INFO -     Recommendation: Use parameterized queries
+2025-10-13 21:31:39,048 - INFO -     CWE: CWE-89
+2025-10-13 21:31:39,048 - INFO -   [validation] core\result_persistence.py:581
+2025-10-13 21:31:39,048 - INFO -     Potential SQL injection vulnerability
+2025-10-13 21:31:39,048 - INFO -     Recommendation: Use parameterized queries
+2025-10-13 21:31:39,048 - INFO -     CWE: CWE-89
+2025-10-13 21:31:39,048 - INFO -   [validation] core\result_persistence.py:583
+2025-10-13 21:31:39,048 - INFO -     Potential SQL injection vulnerability
+2025-10-13 21:31:39,048 - INFO -     Recommendation: Use parameterized queries
+2025-10-13 21:31:39,048 - INFO -     CWE: CWE-89
+2025-10-13 21:31:39,048 - INFO -   [validation] core\result_persistence.py:601
+2025-10-13 21:31:39,048 - INFO -     Potential SQL injection vulnerability
+2025-10-13 21:31:39,048 - INFO -     Recommendation: Use parameterized queries
+2025-10-13 21:31:39,048 - INFO -     CWE: CWE-89
+2025-10-13 21:31:39,048 - INFO -   [validation] core\result_persistence.py:602
+2025-10-13 21:31:39,048 - INFO -     Potential SQL injection vulnerability
+2025-10-13 21:31:39,048 - INFO -     Recommendation: Use parameterized queries
+2025-10-13 21:31:39,048 - INFO -     CWE: CWE-89
+2025-10-13 21:31:39,048 - INFO -   [validation] core\result_persistence.py:614
+2025-10-13 21:31:39,048 - INFO -     Potential SQL injection vulnerability
+2025-10-13 21:31:39,048 - INFO -     Recommendation: Use parameterized queries
+2025-10-13 21:31:39,049 - INFO -     CWE: CWE-89
+2025-10-13 21:31:39,049 - INFO -   [validation] core\result_persistence.py:615
+2025-10-13 21:31:39,049 - INFO -     Potential SQL injection vulnerability
+2025-10-13 21:31:39,049 - INFO -     Recommendation: Use parameterized queries
+2025-10-13 21:31:39,049 - INFO -     CWE: CWE-89
+2025-10-13 21:31:39,049 - INFO -   [validation] scripts\security_review.py:81
+2025-10-13 21:31:39,049 - INFO -     Potential SQL injection vulnerability
+2025-10-13 21:31:39,049 - INFO -     Recommendation: Use parameterized queries
+2025-10-13 21:31:39,049 - INFO -     CWE: CWE-89
+2025-10-13 21:31:39,049 - INFO -   [validation] scripts\security_review.py:82
+2025-10-13 21:31:39,049 - INFO -     Potential SQL injection vulnerability
+2025-10-13 21:31:39,049 - INFO -     Recommendation: Use parameterized queries
+2025-10-13 21:31:39,049 - INFO -     CWE: CWE-89
+2025-10-13 21:31:39,049 - INFO -   [validation] scripts\security_review.py:83
+2025-10-13 21:31:39,049 - INFO -     Potential SQL injection vulnerability
+2025-10-13 21:31:39,049 - INFO -     Recommendation: Use parameterized queries
+2025-10-13 21:31:39,049 - INFO -     CWE: CWE-89
+2025-10-13 21:31:39,049 - INFO -   [validation] scripts\security_review.py:84
+2025-10-13 21:31:39,050 - INFO -     Potential SQL injection vulnerability
+2025-10-13 21:31:39,050 - INFO -     Recommendation: Use parameterized queries
+2025-10-13 21:31:39,050 - INFO -     CWE: CWE-89
+2025-10-13 21:31:39,050 - INFO -   [authentication] config/default.yaml:0
+2025-10-13 21:31:39,050 - INFO -     Authentication is disabled
+2025-10-13 21:31:39,050 - INFO -     Recommendation: Enable authentication for production deployments
+2025-10-13 21:31:39,050 - INFO -     CWE: CWE-287
+2025-10-13 21:31:39,050 - INFO -   [encryption] config/default.yaml:0
+2025-10-13 21:31:39,050 - INFO -     Results encryption is disabled
+2025-10-13 21:31:39,050 - INFO -     Recommendation: Enable encryption for sensitive data storage
+2025-10-13 21:31:39,050 - INFO -     CWE: CWE-311
+2025-10-13 21:31:39,050 - INFO -   [logging] core\bitcoin_cryptography.py:140
+2025-10-13 21:31:39,050 - INFO -     Potential logging of sensitive data
+2025-10-13 21:31:39,050 - INFO -     Recommendation: Avoid logging sensitive information or mask it
+2025-10-13 21:31:39,050 - INFO -     CWE: CWE-532
+2025-10-13 21:31:39,050 - INFO -   [logging] core\bitcoin_cryptography.py:144
+2025-10-13 21:31:39,050 - INFO -     Potential logging of sensitive data
+2025-10-13 21:31:39,051 - INFO -     Recommendation: Avoid logging sensitive information or mask it
+2025-10-13 21:31:39,051 - INFO -     CWE: CWE-532
+2025-10-13 21:31:39,051 - INFO -   [logging] core\bitcoin_cryptography.py:183
+2025-10-13 21:31:39,051 - INFO -     Potential logging of sensitive data
+2025-10-13 21:31:39,051 - INFO -     Recommendation: Avoid logging sensitive information or mask it
+2025-10-13 21:31:39,051 - INFO -     CWE: CWE-532
+2025-10-13 21:31:39,051 - INFO -   [logging] core\bitcoin_cryptography.py:187
+2025-10-13 21:31:39,051 - INFO -     Potential logging of sensitive data
+2025-10-13 21:31:39,051 - INFO -     Recommendation: Avoid logging sensitive information or mask it
+2025-10-13 21:31:39,051 - INFO -     CWE: CWE-532
+2025-10-13 21:31:39,051 - INFO -   [logging] core\configuration_manager.py:457
+2025-10-13 21:31:39,051 - INFO -     Potential logging of sensitive data
+2025-10-13 21:31:39,051 - INFO -     Recommendation: Avoid logging sensitive information or mask it
+2025-10-13 21:31:39,051 - INFO -     CWE: CWE-532
+2025-10-13 21:31:39,051 - INFO -   [logging] core\error_handling.py:137
+2025-10-13 21:31:39,052 - INFO -     Potential logging of sensitive data
+2025-10-13 21:31:39,052 - INFO -     Recommendation: Avoid logging sensitive information or mask it
+2025-10-13 21:31:39,052 - INFO -     CWE: CWE-532
+2025-10-13 21:31:39,052 - INFO -   [logging] core\error_handling.py:173
+2025-10-13 21:31:39,052 - INFO -     Potential logging of sensitive data
+2025-10-13 21:31:39,052 - INFO -     Recommendation: Avoid logging sensitive information or mask it
+2025-10-13 21:31:39,052 - INFO -     CWE: CWE-532
+2025-10-13 21:31:39,052 - INFO -   [logging] core\error_handling.py:578
+2025-10-13 21:31:39,052 - INFO -     Potential logging of sensitive data
+2025-10-13 21:31:39,052 - INFO -     Recommendation: Avoid logging sensitive information or mask it
+2025-10-13 21:31:39,052 - INFO -     CWE: CWE-532
+2025-10-13 21:31:39,052 - INFO -   [logging] core\keyhound_enhanced.py:73
+2025-10-13 21:31:39,052 - INFO -     Potential logging of sensitive data
+2025-10-13 21:31:39,052 - INFO -     Recommendation: Avoid logging sensitive information or mask it
+2025-10-13 21:31:39,052 - INFO -     CWE: CWE-532
+2025-10-13 21:31:39,052 - INFO -   [logging] core\keyhound_enhanced.py:119
+2025-10-13 21:31:39,052 - INFO -     Potential logging of sensitive data
+2025-10-13 21:31:39,053 - INFO -     Recommendation: Avoid logging sensitive information or mask it
+2025-10-13 21:31:39,053 - INFO -     CWE: CWE-532
+2025-10-13 21:31:39,053 - INFO -   [logging] core\keyhound_enhanced.py:121
+2025-10-13 21:31:39,053 - INFO -     Potential logging of sensitive data
+2025-10-13 21:31:39,053 - INFO -     Recommendation: Avoid logging sensitive information or mask it
+2025-10-13 21:31:39,053 - INFO -     CWE: CWE-532
+2025-10-13 21:31:39,053 - INFO -   [logging] core\keyhound_enhanced.py:128
+2025-10-13 21:31:39,053 - INFO -     Potential logging of sensitive data
+2025-10-13 21:31:39,053 - INFO -     Recommendation: Avoid logging sensitive information or mask it
+2025-10-13 21:31:39,053 - INFO -     CWE: CWE-532
+2025-10-13 21:31:39,053 - INFO -   [logging] core\keyhound_enhanced.py:130
+2025-10-13 21:31:39,053 - INFO -     Potential logging of sensitive data
+2025-10-13 21:31:39,053 - INFO -     Recommendation: Avoid logging sensitive information or mask it
+2025-10-13 21:31:39,053 - INFO -     CWE: CWE-532
+2025-10-13 21:31:39,053 - INFO -   [logging] core\keyhound_enhanced.py:144
+2025-10-13 21:31:39,053 - INFO -     Potential logging of sensitive data
+2025-10-13 21:31:39,053 - INFO -     Recommendation: Avoid logging sensitive information or mask it
+2025-10-13 21:31:39,053 - INFO -     CWE: CWE-532
+2025-10-13 21:31:39,053 - INFO -   [logging] core\keyhound_enhanced.py:146
+2025-10-13 21:31:39,053 - INFO -     Potential logging of sensitive data
+2025-10-13 21:31:39,053 - INFO -     Recommendation: Avoid logging sensitive information or mask it
+2025-10-13 21:31:39,053 - INFO -     CWE: CWE-532
+2025-10-13 21:31:39,054 - INFO -   [logging] core\keyhound_enhanced.py:159
+2025-10-13 21:31:39,054 - INFO -     Potential logging of sensitive data
+2025-10-13 21:31:39,054 - INFO -     Recommendation: Avoid logging sensitive information or mask it
+2025-10-13 21:31:39,054 - INFO -     CWE: CWE-532
+2025-10-13 21:31:39,054 - INFO -   [logging] core\keyhound_enhanced.py:161
+2025-10-13 21:31:39,054 - INFO -     Potential logging of sensitive data
+2025-10-13 21:31:39,054 - INFO -     Recommendation: Avoid logging sensitive information or mask it
+2025-10-13 21:31:39,054 - INFO -     CWE: CWE-532
+2025-10-13 21:31:39,054 - INFO -   [logging] core\keyhound_enhanced.py:167
+2025-10-13 21:31:39,054 - INFO -     Potential logging of sensitive data
+2025-10-13 21:31:39,054 - INFO -     Recommendation: Avoid logging sensitive information or mask it
+2025-10-13 21:31:39,054 - INFO -     CWE: CWE-532
+2025-10-13 21:31:39,054 - INFO -   [logging] core\keyhound_enhanced.py:169
+2025-10-13 21:31:39,054 - INFO -     Potential logging of sensitive data
+2025-10-13 21:31:39,054 - INFO -     Recommendation: Avoid logging sensitive information or mask it
+2025-10-13 21:31:39,054 - INFO -     CWE: CWE-532
+2025-10-13 21:31:39,054 - INFO -   [logging] core\keyhound_enhanced.py:175
+2025-10-13 21:31:39,054 - INFO -     Potential logging of sensitive data
+2025-10-13 21:31:39,054 - INFO -     Recommendation: Avoid logging sensitive information or mask it
+2025-10-13 21:31:39,054 - INFO -     CWE: CWE-532
+2025-10-13 21:31:39,054 - INFO -   [logging] core\keyhound_enhanced.py:177
+2025-10-13 21:31:39,054 - INFO -     Potential logging of sensitive data
+2025-10-13 21:31:39,055 - INFO -     Recommendation: Avoid logging sensitive information or mask it
+2025-10-13 21:31:39,055 - INFO -     CWE: CWE-532
+2025-10-13 21:31:39,055 - INFO -   [logging] core\keyhound_enhanced.py:194
+2025-10-13 21:31:39,055 - INFO -     Potential logging of sensitive data
+2025-10-13 21:31:39,055 - INFO -     Recommendation: Avoid logging sensitive information or mask it
+2025-10-13 21:31:39,055 - INFO -     CWE: CWE-532
+2025-10-13 21:31:39,055 - INFO -   [logging] core\keyhound_enhanced.py:196
+2025-10-13 21:31:39,055 - INFO -     Potential logging of sensitive data
+2025-10-13 21:31:39,055 - INFO -     Recommendation: Avoid logging sensitive information or mask it
+2025-10-13 21:31:39,055 - INFO -     CWE: CWE-532
+2025-10-13 21:31:39,055 - INFO -   [logging] core\keyhound_enhanced.py:199
+2025-10-13 21:31:39,055 - INFO -     Potential logging of sensitive data
+2025-10-13 21:31:39,055 - INFO -     Recommendation: Avoid logging sensitive information or mask it
+2025-10-13 21:31:39,055 - INFO -     CWE: CWE-532
+2025-10-13 21:31:39,055 - INFO -   [logging] core\keyhound_enhanced.py:202
+2025-10-13 21:31:39,055 - INFO -     Potential logging of sensitive data
+2025-10-13 21:31:39,055 - INFO -     Recommendation: Avoid logging sensitive information or mask it
+2025-10-13 21:31:39,055 - INFO -     CWE: CWE-532
+2025-10-13 21:31:39,055 - INFO -   [logging] core\keyhound_enhanced.py:213
+2025-10-13 21:31:39,055 - INFO -     Potential logging of sensitive data
+2025-10-13 21:31:39,055 - INFO -     Recommendation: Avoid logging sensitive information or mask it
+2025-10-13 21:31:39,055 - INFO -     CWE: CWE-532
+2025-10-13 21:31:39,056 - INFO -   [logging] core\keyhound_enhanced.py:216
+2025-10-13 21:31:39,056 - INFO -     Potential logging of sensitive data
+2025-10-13 21:31:39,056 - INFO -     Recommendation: Avoid logging sensitive information or mask it
+2025-10-13 21:31:39,056 - INFO -     CWE: CWE-532
+2025-10-13 21:31:39,056 - INFO -   [logging] core\keyhound_enhanced.py:218
+2025-10-13 21:31:39,056 - INFO -     Potential logging of sensitive data
+2025-10-13 21:31:39,056 - INFO -     Recommendation: Avoid logging sensitive information or mask it
+2025-10-13 21:31:39,056 - INFO -     CWE: CWE-532
+2025-10-13 21:31:39,056 - INFO -   [logging] core\keyhound_enhanced.py:221
+2025-10-13 21:31:39,056 - INFO -     Potential logging of sensitive data
+2025-10-13 21:31:39,056 - INFO -     Recommendation: Avoid logging sensitive information or mask it
+2025-10-13 21:31:39,056 - INFO -     CWE: CWE-532
+2025-10-13 21:31:39,056 - INFO -   [logging] core\keyhound_enhanced.py:495
+2025-10-13 21:31:39,056 - INFO -     Potential logging of sensitive data
+2025-10-13 21:31:39,056 - INFO -     Recommendation: Avoid logging sensitive information or mask it
+2025-10-13 21:31:39,056 - INFO -     CWE: CWE-532
+2025-10-13 21:31:39,056 - INFO -   [logging] core\keyhound_enhanced.py:500
+2025-10-13 21:31:39,056 - INFO -     Potential logging of sensitive data
+2025-10-13 21:31:39,056 - INFO -     Recommendation: Avoid logging sensitive information or mask it
+2025-10-13 21:31:39,057 - INFO -     CWE: CWE-532
+2025-10-13 21:31:39,057 - INFO -   [logging] core\memory_optimization.py:267
+2025-10-13 21:31:39,057 - INFO -     Potential logging of sensitive data
+2025-10-13 21:31:39,057 - INFO -     Recommendation: Avoid logging sensitive information or mask it
+2025-10-13 21:31:39,057 - INFO -     CWE: CWE-532
+2025-10-13 21:31:39,057 - INFO -   [logging] core\memory_optimization.py:294
+2025-10-13 21:31:39,057 - INFO -     Potential logging of sensitive data
+2025-10-13 21:31:39,057 - INFO -     Recommendation: Avoid logging sensitive information or mask it
+2025-10-13 21:31:39,057 - INFO -     CWE: CWE-532
+2025-10-13 21:31:39,057 - INFO -   [logging] core\memory_optimization.py:309
+2025-10-13 21:31:39,057 - INFO -     Potential logging of sensitive data
+2025-10-13 21:31:39,057 - INFO -     Recommendation: Avoid logging sensitive information or mask it
+2025-10-13 21:31:39,057 - INFO -     CWE: CWE-532
+2025-10-13 21:31:39,057 - INFO -   [logging] core\memory_optimization.py:516
+2025-10-13 21:31:39,057 - INFO -     Potential logging of sensitive data
+2025-10-13 21:31:39,057 - INFO -     Recommendation: Avoid logging sensitive information or mask it
+2025-10-13 21:31:39,057 - INFO -     CWE: CWE-532
+2025-10-13 21:31:39,057 - INFO -   [logging] core\memory_optimization.py:544
+2025-10-13 21:31:39,057 - INFO -     Potential logging of sensitive data
+2025-10-13 21:31:39,057 - INFO -     Recommendation: Avoid logging sensitive information or mask it
+2025-10-13 21:31:39,057 - INFO -     CWE: CWE-532
+2025-10-13 21:31:39,057 - INFO -   [logging] core\memory_optimization.py:557
+2025-10-13 21:31:39,057 - INFO -     Potential logging of sensitive data
+2025-10-13 21:31:39,058 - INFO -     Recommendation: Avoid logging sensitive information or mask it
+2025-10-13 21:31:39,058 - INFO -     CWE: CWE-532
+2025-10-13 21:31:39,058 - INFO -   [logging] core\simple_keyhound.py:45
+2025-10-13 21:31:39,058 - INFO -     Potential logging of sensitive data
+2025-10-13 21:31:39,058 - INFO -     Recommendation: Avoid logging sensitive information or mask it
+2025-10-13 21:31:39,058 - INFO -     CWE: CWE-532
+2025-10-13 21:31:39,058 - INFO -   [logging] core\simple_keyhound.py:55
+2025-10-13 21:31:39,058 - INFO -     Potential logging of sensitive data
+2025-10-13 21:31:39,058 - INFO -     Recommendation: Avoid logging sensitive information or mask it
+2025-10-13 21:31:39,058 - INFO -     CWE: CWE-532
+2025-10-13 21:31:39,058 - INFO -   [logging] core\simple_keyhound.py:85
+2025-10-13 21:31:39,058 - INFO -     Potential logging of sensitive data
+2025-10-13 21:31:39,058 - INFO -     Recommendation: Avoid logging sensitive information or mask it
+2025-10-13 21:31:39,058 - INFO -     CWE: CWE-532
+2025-10-13 21:31:39,058 - INFO -   [logging] core\simple_keyhound.py:126
+2025-10-13 21:31:39,058 - INFO -     Potential logging of sensitive data
+2025-10-13 21:31:39,058 - INFO -     Recommendation: Avoid logging sensitive information or mask it
+2025-10-13 21:31:39,058 - INFO -     CWE: CWE-532
+2025-10-13 21:31:39,058 - INFO -   [logging] core\simple_keyhound.py:134
+2025-10-13 21:31:39,058 - INFO -     Potential logging of sensitive data
+2025-10-13 21:31:39,058 - INFO -     Recommendation: Avoid logging sensitive information or mask it
+2025-10-13 21:31:39,058 - INFO -     CWE: CWE-532
+2025-10-13 21:31:39,059 - INFO -   [logging] core\simple_keyhound.py:139
+2025-10-13 21:31:39,059 - INFO -     Potential logging of sensitive data
+2025-10-13 21:31:39,059 - INFO -     Recommendation: Avoid logging sensitive information or mask it
+2025-10-13 21:31:39,059 - INFO -     CWE: CWE-532
+2025-10-13 21:31:39,059 - INFO -   [logging] scripts\security_review.py:91
+2025-10-13 21:31:39,059 - INFO -     Potential logging of sensitive data
+2025-10-13 21:31:39,059 - INFO -     Recommendation: Avoid logging sensitive information or mask it
+2025-10-13 21:31:39,059 - INFO -     CWE: CWE-532
+2025-10-13 21:31:39,059 - INFO - 
+LOW ISSUES (3):
+2025-10-13 21:31:39,059 - INFO -   [encryption] config/default.yaml:0
+2025-10-13 21:31:39,059 - INFO -     SQLite database without password protection
+2025-10-13 21:31:39,059 - INFO -     Recommendation: Consider using PostgreSQL with authentication or encrypt SQLite
+2025-10-13 21:31:39,059 - INFO -     CWE: CWE-311
+2025-10-13 21:31:39,059 - INFO -   [encryption] config/environments/production.yaml:0
+2025-10-13 21:31:39,059 - INFO -     SQLite database without password protection
+2025-10-13 21:31:39,059 - INFO -     Recommendation: Consider using PostgreSQL with authentication or encrypt SQLite
+2025-10-13 21:31:39,059 - INFO -     CWE: CWE-311
+2025-10-13 21:31:39,059 - INFO -   [encryption] config/environments/docker.yaml:0
+2025-10-13 21:31:39,059 - INFO -     SQLite database without password protection
+2025-10-13 21:31:39,059 - INFO -     Recommendation: Consider using PostgreSQL with authentication or encrypt SQLite
+2025-10-13 21:31:39,059 - INFO -     CWE: CWE-311
+2025-10-13 21:31:39,059 - INFO - 
+INFO ISSUES (2):
+2025-10-13 21:31:39,060 - INFO -   [dependencies] requirements.txt:0
+2025-10-13 21:31:39,060 - INFO -     Package flask may have known vulnerabilities
+2025-10-13 21:31:39,060 - INFO -     Recommendation: Check for security updates and use latest secure version
+2025-10-13 21:31:39,060 - INFO -     CWE: CWE-1104
+2025-10-13 21:31:39,060 - INFO -   [dependencies] requirements.txt:0
+2025-10-13 21:31:39,060 - INFO -     Package requests may have known vulnerabilities
+2025-10-13 21:31:39,060 - INFO -     Recommendation: Check for security updates and use latest secure version
+2025-10-13 21:31:39,060 - INFO -     CWE: CWE-1104
+2025-10-13 21:31:39,060 - INFO - 
+============================================================
