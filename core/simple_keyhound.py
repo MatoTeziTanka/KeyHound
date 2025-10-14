@@ -360,18 +360,23 @@ def main():
     print(f"CPU Cores: {system_info['cpu_count']}")
     print(f"Memory: {system_info['memory_total'] / (1024**3):.1f} GB")
     
-    # Test brainwallet security
-    print("\nTesting brainwallet security...")
-    security_results = keyhound.test_brainwallet_security()
+    # Test brainwallet security - PHASED OUT
+    print("\nBrainwallet security testing: PHASED OUT")
+    print("Reason: No high-value brainwallet targets found in comprehensive scan")
+    print("Focus: KeyHound now optimized for puzzle solving and core Bitcoin cryptography")
     
-    print(f"Patterns tested: {security_results['patterns_tested']}")
-    print(f"Vulnerable patterns: {len(security_results['vulnerable_patterns'])}")
-    
-    # Show vulnerable patterns
-    if security_results['vulnerable_patterns']:
-        print("\nVulnerable patterns:")
-        for pattern in security_results['vulnerable_patterns']:
-            print(f"  - '{pattern['pattern']}' (score: {pattern['security_score']})")
+    # # Test brainwallet security
+    # print("\nTesting brainwallet security...")
+    # security_results = keyhound.test_brainwallet_security()
+    # 
+    # print(f"Patterns tested: {security_results['patterns_tested']}")
+    # print(f"Vulnerable patterns: {len(security_results['vulnerable_patterns'])}")
+    # 
+    # # Show vulnerable patterns
+    # if security_results['vulnerable_patterns']:
+    #     print("\nVulnerable patterns:")
+    #     for pattern in security_results['vulnerable_patterns']:
+    #         print(f"  - '{pattern['pattern']}' (score: {pattern['security_score']})")
     
     # Test puzzle solving (small puzzle for demo)
     print("\nTesting puzzle solving (40-bit demo)...")

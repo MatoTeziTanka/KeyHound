@@ -1,0 +1,172 @@
+{
+  "check_summary": {
+    "timestamp": "2025-10-13T23:14:27.223365",
+    "total_addresses_checked": 10,
+    "bitcoin_price_usd": 113557,
+    "addresses_with_balances": 6
+  },
+  "addresses_with_balances": [
+    {
+      "pattern": "password",
+      "address": "1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2",
+      "description": "Common \"password\" pattern",
+      "balance_satoshi": 496944,
+      "balance_btc": 0.00496944,
+      "balance_usd": 564.3146980800001,
+      "has_balance": true,
+      "timestamp": "2025-10-13T23:14:12.802737"
+    },
+    {
+      "pattern": "123456",
+      "address": "1Q2TWHE3GMdB6BZKafqwxXtWAWgFt5Jvm3",
+      "description": "Common numeric pattern",
+      "balance_satoshi": 53790,
+      "balance_btc": 0.0005379,
+      "balance_usd": 61.0823103,
+      "has_balance": true,
+      "timestamp": "2025-10-13T23:14:14.453577"
+    },
+    {
+      "pattern": "bitcoin",
+      "address": "1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2",
+      "description": "Bitcoin keyword pattern",
+      "balance_satoshi": 496944,
+      "balance_btc": 0.00496944,
+      "balance_usd": 564.3146980800001,
+      "has_balance": true,
+      "timestamp": "2025-10-13T23:14:17.842713"
+    },
+    {
+      "pattern": "wallet",
+      "address": "1Q2TWHE3GMdB6BZKafqwxXtWAWgFt5Jvm3",
+      "description": "Wallet keyword pattern",
+      "balance_satoshi": 53790,
+      "balance_btc": 0.0005379,
+      "balance_usd": 61.0823103,
+      "has_balance": true,
+      "timestamp": "2025-10-13T23:14:21.195919"
+    },
+    {
+      "pattern": "private",
+      "address": "1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2",
+      "description": "Private key reference",
+      "balance_satoshi": 496944,
+      "balance_btc": 0.00496944,
+      "balance_usd": 564.3146980800001,
+      "has_balance": true,
+      "timestamp": "2025-10-13T23:14:22.850055"
+    },
+    {
+      "pattern": "key",
+      "address": "1Q2TWHE3GMdB6BZKafqwxXtWAWgFt5Jvm3",
+      "description": "Key reference pattern",
+      "balance_satoshi": 53790,
+      "balance_btc": 0.0005379,
+      "balance_usd": 61.0823103,
+      "has_balance": true,
+      "timestamp": "2025-10-13T23:14:26.223015"
+    }
+  ],
+  "all_results": [
+    {
+      "pattern": "brainwallet",
+      "address": "1JryTePceSiWVpoNBU8SbwiT7J4ghzijzW",
+      "description": "Classic \"brainwallet\" pattern",
+      "balance_satoshi": 0,
+      "balance_btc": 0.0,
+      "balance_usd": 0.0,
+      "has_balance": false,
+      "timestamp": "2025-10-13T23:14:11.126836"
+    },
+    {
+      "pattern": "password",
+      "address": "1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2",
+      "description": "Common \"password\" pattern",
+      "balance_satoshi": 496944,
+      "balance_btc": 0.00496944,
+      "balance_usd": 564.3146980800001,
+      "has_balance": true,
+      "timestamp": "2025-10-13T23:14:12.802737"
+    },
+    {
+      "pattern": "123456",
+      "address": "1Q2TWHE3GMdB6BZKafqwxXtWAWgFt5Jvm3",
+      "description": "Common numeric pattern",
+      "balance_satoshi": 53790,
+      "balance_btc": 0.0005379,
+      "balance_usd": 61.0823103,
+      "has_balance": true,
+      "timestamp": "2025-10-13T23:14:14.453577"
+    },
+    {
+      "pattern": "hello world",
+      "address": "1JryTePceSiWVpoNBU8SbwiT7J4ghzijzW",
+      "description": "Classic programming phrase",
+      "balance_satoshi": 0,
+      "balance_btc": 0.0,
+      "balance_usd": 0.0,
+      "has_balance": false,
+      "timestamp": "2025-10-13T23:14:16.159981"
+    },
+    {
+      "pattern": "bitcoin",
+      "address": "1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2",
+      "description": "Bitcoin keyword pattern",
+      "balance_satoshi": 496944,
+      "balance_btc": 0.00496944,
+      "balance_usd": 564.3146980800001,
+      "has_balance": true,
+      "timestamp": "2025-10-13T23:14:17.842713"
+    },
+    {
+      "pattern": "satoshi",
+      "address": "1JryTePceSiWVpoNBU8SbwiT7J4ghzijzW",
+      "description": "Satoshi Nakamoto reference",
+      "balance_satoshi": 0,
+      "balance_btc": 0.0,
+      "balance_usd": 0.0,
+      "has_balance": false,
+      "timestamp": "2025-10-13T23:14:19.518443"
+    },
+    {
+      "pattern": "wallet",
+      "address": "1Q2TWHE3GMdB6BZKafqwxXtWAWgFt5Jvm3",
+      "description": "Wallet keyword pattern",
+      "balance_satoshi": 53790,
+      "balance_btc": 0.0005379,
+      "balance_usd": 61.0823103,
+      "has_balance": true,
+      "timestamp": "2025-10-13T23:14:21.195919"
+    },
+    {
+      "pattern": "private",
+      "address": "1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2",
+      "description": "Private key reference",
+      "balance_satoshi": 496944,
+      "balance_btc": 0.00496944,
+      "balance_usd": 564.3146980800001,
+      "has_balance": true,
+      "timestamp": "2025-10-13T23:14:22.850055"
+    },
+    {
+      "pattern": "secret",
+      "address": "1JryTePceSiWVpoNBU8SbwiT7J4ghzijzW",
+      "description": "Secret key reference",
+      "balance_satoshi": 0,
+      "balance_btc": 0.0,
+      "balance_usd": 0.0,
+      "has_balance": false,
+      "timestamp": "2025-10-13T23:14:24.530520"
+    },
+    {
+      "pattern": "key",
+      "address": "1Q2TWHE3GMdB6BZKafqwxXtWAWgFt5Jvm3",
+      "description": "Key reference pattern",
+      "balance_satoshi": 53790,
+      "balance_btc": 0.0005379,
+      "balance_usd": 61.0823103,
+      "has_balance": true,
+      "timestamp": "2025-10-13T23:14:26.223015"
+    }
+  ]
+}

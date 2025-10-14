@@ -1,0 +1,24 @@
+{
+  "target_address": "1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2",
+  "current_balance_btc": 0.00496944,
+  "current_balance_usd": 564.1805232,
+  "bitcoin_price_usd": 113530,
+  "verified_patterns": [
+    {
+      "pattern": "password",
+      "private_key": "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8",
+      "verified": false
+    },
+    {
+      "pattern": "bitcoin",
+      "private_key": "6b88c087247aa2f07ee1c5956b8e1a9f4c7f892a70e324f1bb3d161e05ca107b",
+      "verified": false
+    },
+    {
+      "pattern": "private",
+      "private_key": "715dc8493c36579a5b116995100f635e3572fdf8703e708ef1a08d943b36774e",
+      "verified": false
+    }
+  ],
+  "scan_timestamp": "2025-10-13T23:14:04.508744"
+}
