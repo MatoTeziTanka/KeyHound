@@ -34,7 +34,7 @@ web:
   host: "0.0.0.0"  # Bind to all interfaces
   port: 5000
   debug: false
-  secret_key: "docker-secret-key-change-in-production"
+  secret_key: "${SECRET_KEY:-change-this-secret-key-in-production}"
 
 # Database (Container storage)
 database:
