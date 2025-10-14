@@ -51,13 +51,18 @@ Examples:
             from web.web_interface import start_web_interface
             start_web_interface()
         elif args.puzzle:
-            from core.simple_keyhound import SimpleKeyHound
-            keyhound = SimpleKeyHound()
             if args.gpu:
-                print("GPU acceleration requested but not implemented in simple version")
-            if args.distributed:
-                print("Distributed computing requested but not implemented in simple version")
-            keyhound.solve_puzzle(args.puzzle)
+                from core.gpu_enabled_keyhound import GPUEnabledKeyHound
+                keyhound = GPUEnabledKeyHound(use_gpu=True, gpu_framework="cuda")
+                if args.distributed:
+                    print("Distributed computing requested but not implemented in GPU version")
+                keyhound.solve_puzzle(args.puzzle)
+            else:
+                from core.simple_keyhound import SimpleKeyHound
+                keyhound = SimpleKeyHound()
+                if args.distributed:
+                    print("Distributed computing requested but not implemented in simple version")
+                keyhound.solve_puzzle(args.puzzle)
         # elif args.brainwallet_test:
         #     from core.keyhound_enhanced import KeyHoundEnhanced
         #     keyhound = KeyHoundEnhanced(config_file=args.config)
