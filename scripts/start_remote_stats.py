@@ -7,7 +7,13 @@ Starts the remote statistics dashboard server.
 import os
 import sys
 import argparse
+import codecs
 from pathlib import Path
+
+# Fix Windows Unicode encoding issues
+if sys.platform == "win32":
+    sys.stdout = codecs.getwriter("utf-8")(sys.stdout.detach())
+    sys.stderr = codecs.getwriter("utf-8")(sys.stderr.detach())
 
 # Add KeyHound root to sys.path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -50,18 +56,18 @@ Examples:
     try:
         import flask
         import flask_socketio
-        print("✓ Web dependencies available")
+        print("[OK] Web dependencies available")
     except ImportError as e:
-        print(f"✗ Web dependencies missing: {e}")
+        print(f"[FAIL] Web dependencies missing: {e}")
         print("Install with: pip install flask flask-socketio")
         sys.exit(1)
     
     # Check if KeyHound components are available
     try:
         from core.simple_keyhound import SimpleKeyHound
-        print("✓ KeyHound components available")
+        print("[OK] KeyHound components available")
     except ImportError as e:
-        print(f"⚠ KeyHound components limited: {e}")
+        print(f"[WARN] KeyHound components limited: {e}")
         print("Some features may not be available")
     
     print()
