@@ -1,0 +1,100 @@
+{
+  "system_info": {
+    "platform": "Windows-11-10.0.26200-SP0",
+    "cpu_count": 6,
+    "memory_gb": 15.849411010742188,
+    "python_version": "3.13.7",
+    "gpu_available": false,
+    "gpu_name": null
+  },
+  "total_tests": 6,
+  "successful_tests": 4,
+  "failed_tests": 2,
+  "total_time": 133.37006330490112,
+  "average_rate_per_second": 255677.6545358137,
+  "average_memory_usage_mb": 0.439453125,
+  "average_cpu_usage_percent": 55.75,
+  "performance_categories": {
+    "excellent": 1,
+    "good": 2,
+    "poor": 1
+  },
+  "results": [
+    {
+      "test_name": "Private Key Generation",
+      "duration": 0.009820222854614258,
+      "iterations": 10000,
+      "rate_per_second": 1018306.8294933114,
+      "memory_usage_mb": 0.01171875,
+      "cpu_usage_percent": 79.05,
+      "success": true,
+      "error_message": null,
+      "additional_metrics": {
+        "iterations": 10000
+      }
+    },
+    {
+      "test_name": "Address Generation",
+      "duration": 0,
+      "iterations": 0,
+      "rate_per_second": 0,
+      "memory_usage_mb": 0,
+      "cpu_usage_percent": 0,
+      "success": false,
+      "error_message": "object of type 'BitcoinAddress' has no len()",
+      "additional_metrics": null
+    },
+    {
+      "test_name": "Brainwallet Testing",
+      "duration": 0,
+      "iterations": 0,
+      "rate_per_second": 0,
+      "memory_usage_mb": 0,
+      "cpu_usage_percent": 0,
+      "success": false,
+      "error_message": "'str' object has no attribute 'get'",
+      "additional_metrics": null
+    },
+    {
+      "test_name": "Puzzle Solving (20-bit)",
+      "duration": 132.83570766448975,
+      "iterations": 100000,
+      "rate_per_second": 752.8096304690554,
+      "memory_usage_mb": 0.10546875,
+      "cpu_usage_percent": 48.7,
+      "success": true,
+      "error_message": null,
+      "additional_metrics": {
+        "iterations": 100000,
+        "bits": 20,
+        "max_attempts": 100000
+      }
+    },
+    {
+      "test_name": "Pattern Library Search",
+      "duration": 0.38100409507751465,
+      "iterations": 1000,
+      "rate_per_second": 2624.6437057232984,
+      "memory_usage_mb": 0.0,
+      "cpu_usage_percent": 47.15,
+      "success": true,
+      "error_message": null,
+      "additional_metrics": {
+        "iterations": 1000
+      }
+    },
+    {
+      "test_name": "Memory Usage",
+      "duration": 0.09743404388427734,
+      "iterations": 100,
+      "rate_per_second": 1026.3353137510155,
+      "memory_usage_mb": 1.640625,
+      "cpu_usage_percent": 48.1,
+      "success": true,
+      "error_message": null,
+      "additional_metrics": {
+        "iterations": 100
+      }
+    }
+  ]
+}
