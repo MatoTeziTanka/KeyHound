@@ -51,13 +51,17 @@ Examples:
             from web.web_interface import start_web_interface
             start_web_interface()
         elif args.puzzle:
-            if args.gpu:
+            # Always try GPU-enabled version first (auto-detects and falls back to CPU)
+            try:
                 from core.gpu_enabled_keyhound import GPUEnabledKeyHound
-                keyhound = GPUEnabledKeyHound(use_gpu=True, gpu_framework="cuda")
+                print("Attempting to use GPU-enabled KeyHound (auto-detects GPU availability)...")
+                keyhound = GPUEnabledKeyHound(use_gpu=args.gpu, gpu_framework="cuda")
                 if args.distributed:
                     print("Distributed computing requested but not implemented in GPU version")
                 keyhound.solve_puzzle(args.puzzle)
-            else:
+            except ImportError:
+                # Fallback to simple version if GPU version not available
+                print("GPU-enabled version not available, using simple version...")
                 from core.simple_keyhound import SimpleKeyHound
                 keyhound = SimpleKeyHound()
                 if args.distributed:
