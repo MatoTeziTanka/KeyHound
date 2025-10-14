@@ -60,7 +60,7 @@ except ImportError:
     numba_cuda = None
 
 # Import KeyHound modules
-from error_handling import KeyHoundLogger, GPUError, error_handler, performance_monitor
+from ..core.error_handling import KeyHoundLogger, GPUError, error_handler, performance_monitor
 
 # Configure logging
 logger = logging.getLogger(__name__)

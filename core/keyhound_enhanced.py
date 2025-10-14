@@ -29,23 +29,44 @@ import numpy as np
 
 # Import KeyHound modules from new modular structure
 from .puzzle_data import BITCOIN_PUZZLES, get_brainwallet_patterns, hex_range_to_int_range
-from ..gpu.gpu_acceleration import GPUAccelerationManager, GPUConfig, GPUPerformanceMetrics
-from ..gpu.gpu_framework import GPUFrameworkManager, GPUDevice, GPUPerformanceMetrics as FrameworkMetrics
 from .brainwallet_patterns import BrainwalletPatternLibrary, BrainwalletPattern, PatternMatch
 from .bitcoin_cryptography import BitcoinCryptography, BitcoinAddress, CryptographyError
 from .memory_optimization import MemoryOptimizer, StreamingKeyProcessor, get_memory_optimizer
 from .configuration_manager import ConfigurationManager, get_config_manager, ConfigSchema, ConfigValidationRule
 from .result_persistence import ResultPersistenceManager, get_result_persistence_manager, ResultType, StorageConfig, StorageBackend
 from .performance_monitoring import PerformanceMonitor, get_performance_monitor, MetricType, AlertLevel
-from ..web.web_interface import KeyHoundWebInterface, create_web_interface, WebConfig
-from ..distributed.distributed_computing import DistributedComputingManager, create_distributed_manager, NodeRole, NetworkConfig, NetworkProtocol
-from ..ml.machine_learning import MachineLearningManager, create_ml_manager, ModelType
-from ..web.mobile_app import KeyHoundMobileApp, create_mobile_app, MobileConfig
 from .error_handling import (
     KeyHoundLogger, KeyHoundError, CryptographyError as KeyHoundCryptographyError,
     GPUError, PuzzleError, BrainwalletError, ConfigurationError,
     error_handler, performance_monitor
 )
+
+# Optional imports for advanced features
+try:
+    from gpu.gpu_acceleration import GPUAccelerationManager, GPUConfig, GPUPerformanceMetrics
+    from gpu.gpu_framework import GPUFrameworkManager, GPUDevice, GPUPerformanceMetrics as FrameworkMetrics
+    GPU_AVAILABLE = True
+except ImportError:
+    GPU_AVAILABLE = False
+
+try:
+    from web.web_interface import KeyHoundWebInterface, create_web_interface, WebConfig
+    from web.mobile_app import KeyHoundMobileApp, create_mobile_app, MobileConfig
+    WEB_AVAILABLE = True
+except ImportError:
+    WEB_AVAILABLE = False
+
+try:
+    from distributed.distributed_computing import DistributedComputingManager, create_distributed_manager, NodeRole, NetworkConfig, NetworkProtocol
+    DISTRIBUTED_AVAILABLE = True
+except ImportError:
+    DISTRIBUTED_AVAILABLE = False
+
+try:
+    from ml.machine_learning import MachineLearningManager, create_ml_manager, ModelType
+    ML_AVAILABLE = True
+except ImportError:
+    ML_AVAILABLE = False
 
 # Configure logging
 keyhound_logger = KeyHoundLogger("KeyHoundEnhanced", log_level="INFO")
@@ -156,20 +177,29 @@ class KeyHoundEnhanced:
             keyhound_logger.log_error(e)
             self.pattern_library = None
         
-        # Initialize GPU acceleration manager (legacy)
+        # Initialize GPU acceleration manager (if available)
         self.gpu_manager = None
-        if use_gpu:
+        self._available_features = {
+            'gpu': GPU_AVAILABLE,
+            'web': WEB_AVAILABLE,
+            'distributed': DISTRIBUTED_AVAILABLE,
+            'ml': ML_AVAILABLE
+        }
+        
+        if use_gpu and GPU_AVAILABLE:
             try:
                 gpu_config = GPUConfig(framework=gpu_framework, verbose=verbose)
                 self.gpu_manager = GPUAccelerationManager(gpu_config)
                 if self.gpu_manager.is_gpu_available():
-                    keyhound_logger.info(f"Legacy GPU acceleration initialized with {gpu_framework.upper()}")
+                    keyhound_logger.info(f"GPU acceleration initialized with {gpu_framework.upper()}")
                 else:
-                    keyhound_logger.warning("Legacy GPU acceleration requested but not available")
+                    keyhound_logger.warning("GPU acceleration requested but not available")
                     self.gpu_manager = None
             except Exception as e:
                 keyhound_logger.log_error(e)
                 self.gpu_manager = None
+        elif use_gpu and not GPU_AVAILABLE:
+            keyhound_logger.warning("GPU acceleration requested but GPU modules not available")
         
         # Initialize advanced GPU framework manager
         self.gpu_framework_manager = None

@@ -40,7 +40,7 @@ import secrets
 from datetime import datetime
 
 # Import KeyHound modules
-from error_handling import KeyHoundLogger, error_handler, performance_monitor
+from .error_handling import KeyHoundLogger, error_handler, performance_monitor
 
 # Configure logging
 logger = KeyHoundLogger("ConfigurationManager")
