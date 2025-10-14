@@ -21,7 +21,7 @@ def main():
 Examples:
   python main.py --web                    # Start web interface
   python main.py --puzzle 66             # Solve 66-bit puzzle
-  python main.py --brainwallet-test      # Test brainwallet security
+         # python main.py --brainwallet-test      # PHASED OUT: No high-value brainwallets found
   python main.py --gpu --puzzle 40       # GPU-accelerated solving
         """
     )
@@ -30,8 +30,8 @@ Examples:
                        help='Start web interface dashboard')
     parser.add_argument('--puzzle', type=int, metavar='BITS',
                        help='Solve Bitcoin puzzle with specified bit length')
-    parser.add_argument('--brainwallet-test', action='store_true',
-                       help='Test brainwallet security')
+           # parser.add_argument('--brainwallet-test', action='store_true',
+           #                    help='Test brainwallet security')  # PHASED OUT: No high-value brainwallets found
     parser.add_argument('--gpu', action='store_true',
                        help='Enable GPU acceleration')
     parser.add_argument('--distributed', action='store_true',
@@ -55,10 +55,10 @@ Examples:
             if args.distributed:
                 keyhound.enable_distributed_computing()
             keyhound.solve_puzzle(args.puzzle)
-        elif args.brainwallet_test:
-            from core.keyhound_enhanced import KeyHoundEnhanced
-            keyhound = KeyHoundEnhanced(config_file=args.config)
-            keyhound.test_brainwallet_security()
+               # elif args.brainwallet_test:
+               #     from core.keyhound_enhanced import KeyHoundEnhanced
+               #     keyhound = KeyHoundEnhanced(config_file=args.config)
+               #     keyhound.test_brainwallet_security()  # PHASED OUT: No high-value brainwallets found
         else:
             parser.print_help()
             

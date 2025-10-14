@@ -1,0 +1,13 @@
+{
+  "scan_summary": {
+    "timestamp": "2025-10-13T22:55:18.254022",
+    "total_patterns_scanned": 152,
+    "min_balance_threshold_usd": 100.0,
+    "bitcoin_price_usd": 114025,
+    "high_value_wallets_found": 0
+  },
+  "high_value_wallets_sorted": [],
+  "all_results": [
+    {
+      "pattern": "password",
+      "address": 
