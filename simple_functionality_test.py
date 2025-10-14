@@ -13,12 +13,12 @@ def test_file_structure():
     print("Testing file structure...")
     
     required_files = [
-        "keyhound/main.py",
-        "keyhound/__init__.py",
-        "keyhound/core/keyhound_enhanced.py",
-        "keyhound/core/bitcoin_cryptography.py",
-        "keyhound/core/puzzle_data.py",
-        "keyhound/core/error_handling.py",
+        "main.py",
+        "__init__.py",
+        "core/keyhound_enhanced.py",
+        "core/bitcoin_cryptography.py",
+        "core/puzzle_data.py",
+        "core/error_handling.py",
         "config/default.yaml",
         "config/environments/production.yaml",
         "config/environments/colab.yaml",
@@ -44,9 +44,9 @@ def test_main_script():
     
     try:
         # Test that main.py exists and can be imported
-        main_file = Path("keyhound/main.py")
+        main_file = Path("main.py")
         if not main_file.exists():
-            print("ERROR: keyhound/main.py not found")
+            print("ERROR: main.py not found")
             return False
         
         # Read the file to check for syntax errors
@@ -56,10 +56,10 @@ def test_main_script():
         # Basic syntax check
         try:
             compile(content, str(main_file), 'exec')
-            print("SUCCESS: keyhound/main.py syntax is valid")
+            print("SUCCESS: main.py syntax is valid")
             return True
         except SyntaxError as e:
-            print(f"ERROR: Syntax error in keyhound/main.py: {e}")
+            print(f"ERROR: Syntax error in main.py: {e}")
             return False
         
     except Exception as e:
@@ -71,10 +71,10 @@ def test_core_modules():
     print("\nTesting core modules...")
     
     core_modules = [
-        "keyhound/core/bitcoin_cryptography.py",
-        "keyhound/core/puzzle_data.py", 
-        "keyhound/core/error_handling.py",
-        "keyhound/core/keyhound_enhanced.py"
+        "core/bitcoin_cryptography.py",
+        "core/puzzle_data.py", 
+        "core/error_handling.py",
+        "core/keyhound_enhanced.py"
     ]
     
     all_valid = True
@@ -100,7 +100,7 @@ def test_puzzle_data():
     """Test puzzle data file"""
     print("\nTesting puzzle data...")
     
-    puzzle_file = Path("keyhound/core/puzzle_data.py")
+    puzzle_file = Path("core/puzzle_data.py")
     if not puzzle_file.exists():
         print("ERROR: puzzle_data.py not found")
         return False
@@ -210,8 +210,8 @@ def main():
         print("Ready for dependency installation and testing!")
         print("\nNext steps:")
         print("1. Install dependencies: pip install -r requirements.txt")
-        print("2. Test imports: python -c 'import keyhound'")
-        print("3. Run main: python keyhound/main.py --help")
+        print("2. Test imports: python -c 'import core'")
+        print("3. Run main: python main.py --help")
     else:
         print("SOME BASIC TESTS FAILED!")
         print("Please review the errors above!")
