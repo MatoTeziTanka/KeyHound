@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-KeyHound Enhanced - Production Entry Point
-Enterprise-grade Bitcoin cryptography and puzzle solving platform
+KeyHound Enhanced - Main Entry Point
+Bitcoin cryptography platform for puzzle solving and challenge monitoring.
 """
 
 import sys
@@ -21,8 +21,9 @@ def main():
 Examples:
   python main.py --web                    # Start web interface
   python main.py --puzzle 66             # Solve 66-bit puzzle
-         # python main.py --brainwallet-test      # PHASED OUT: No high-value brainwallets found
+  # python main.py --brainwallet-test      # PHASED OUT: No high-value brainwallets found
   python main.py --gpu --puzzle 40       # GPU-accelerated solving
+  python main.py --monitor-challenges    # Monitor Bitcoin challenge addresses
         """
     )
     
@@ -30,12 +31,14 @@ Examples:
                        help='Start web interface dashboard')
     parser.add_argument('--puzzle', type=int, metavar='BITS',
                        help='Solve Bitcoin puzzle with specified bit length')
-           # parser.add_argument('--brainwallet-test', action='store_true',
-           #                    help='Test brainwallet security')  # PHASED OUT: No high-value brainwallets found
+    # parser.add_argument('--brainwallet-test', action='store_true',
+    #                    help='Test brainwallet security')  # PHASED OUT: No high-value brainwallets found
     parser.add_argument('--gpu', action='store_true',
                        help='Enable GPU acceleration')
     parser.add_argument('--distributed', action='store_true',
                        help='Enable distributed computing')
+    parser.add_argument('--monitor-challenges', action='store_true',
+                       help='Monitor Bitcoin challenge addresses and test notifications')
     parser.add_argument('--config', type=str, default='../config/default.yaml',
                        help='Configuration file path')
     parser.add_argument('--log-level', choices=['DEBUG', 'INFO', 'WARNING', 'ERROR'],
@@ -48,17 +51,22 @@ Examples:
             from web.web_interface import start_web_interface
             start_web_interface()
         elif args.puzzle:
-            from core.keyhound_enhanced import KeyHoundEnhanced
-            keyhound = KeyHoundEnhanced(config_file=args.config)
+            from core.simple_keyhound import SimpleKeyHound
+            keyhound = SimpleKeyHound()
             if args.gpu:
-                keyhound.enable_gpu_acceleration()
+                print("GPU acceleration requested but not implemented in simple version")
             if args.distributed:
-                keyhound.enable_distributed_computing()
+                print("Distributed computing requested but not implemented in simple version")
             keyhound.solve_puzzle(args.puzzle)
-               # elif args.brainwallet_test:
-               #     from core.keyhound_enhanced import KeyHoundEnhanced
-               #     keyhound = KeyHoundEnhanced(config_file=args.config)
-               #     keyhound.test_brainwallet_security()  # PHASED OUT: No high-value brainwallets found
+        # elif args.brainwallet_test:
+        #     from core.keyhound_enhanced import KeyHoundEnhanced
+        #     keyhound = KeyHoundEnhanced(config_file=args.config)
+        #     keyhound.test_brainwallet_security()  # PHASED OUT: No high-value brainwallets found
+        elif args.monitor_challenges:
+            from core.simple_challenge_monitor import SimpleChallengeMonitor
+            monitor = SimpleChallengeMonitor()
+            results = monitor.check_solved_addresses()
+            monitor.save_results(results)
         else:
             parser.print_help()
             
@@ -67,7 +75,7 @@ Examples:
         print("Make sure all dependencies are installed: pip install -r requirements.txt")
         sys.exit(1)
     except Exception as e:
-        print(f"Error: {e}")
+        print(f"An unexpected error occurred: {e}")
         sys.exit(1)
 
 if __name__ == "__main__":
