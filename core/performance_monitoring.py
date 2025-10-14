@@ -37,7 +37,7 @@ from enum import Enum
 import numpy as np
 
 # Import KeyHound modules
-from error_handling import KeyHoundLogger, error_handler, performance_monitor
+from .error_handling import KeyHoundLogger, error_handler, performance_monitor
 
 # Configure logging
 logger = KeyHoundLogger("PerformanceMonitoring")

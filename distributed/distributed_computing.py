@@ -61,7 +61,7 @@ except ImportError:
     redis = None
 
 # Import KeyHound modules
-from error_handling import KeyHoundLogger, error_handler, performance_monitor
+from ..core.error_handling import KeyHoundLogger, error_handler, performance_monitor
 from keyhound_enhanced import KeyHoundEnhanced
 from result_persistence import ResultType, StorageBackend
 from performance_monitoring import MetricType, AlertLevel

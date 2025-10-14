@@ -38,7 +38,7 @@ import psutil
 from pathlib import Path
 
 # Import KeyHound modules
-from error_handling import KeyHoundLogger, error_handler, performance_monitor
+from .error_handling import KeyHoundLogger, error_handler, performance_monitor
 
 # Configure logging
 logger = KeyHoundLogger("MemoryOptimization")

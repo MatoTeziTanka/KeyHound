@@ -49,7 +49,7 @@ except ImportError:
     SocketIO = None
 
 # Import KeyHound modules
-from error_handling import KeyHoundLogger, error_handler, performance_monitor
+from ..core.error_handling import KeyHoundLogger, error_handler, performance_monitor
 from keyhound_enhanced import KeyHoundEnhanced
 from web_interface import KeyHoundWebInterface, WebConfig
 

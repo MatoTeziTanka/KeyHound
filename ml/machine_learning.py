@@ -76,7 +76,7 @@ except ImportError:
     nltk = None
 
 # Import KeyHound modules
-from error_handling import KeyHoundLogger, error_handler, performance_monitor
+from ..core.error_handling import KeyHoundLogger, error_handler, performance_monitor
 from keyhound_enhanced import KeyHoundEnhanced
 from brainwallet_patterns import BrainwalletPattern, BrainwalletPatternLibrary
 from bitcoin_cryptography import BitcoinCryptography
