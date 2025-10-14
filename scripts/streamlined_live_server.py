@@ -161,6 +161,7 @@ def start_streamlined_live_server():
                     <a href="/api/stats" class="action-button">System Stats</a>
                     <a href="/api/puzzle-solve/40" class="action-button">Solve 40-bit Puzzle</a>
                     <a href="/api/puzzle-solve/50" class="action-button">Solve 50-bit Puzzle</a>
+                    <a href="/api/monitor-challenges" class="action-button" style="background: #ff8800;">Monitor Challenges</a>
                     <br>
                     <p class="phased-out">Brainwallet Testing: PHASED OUT</p>
                 </div>
@@ -237,6 +238,30 @@ def start_streamlined_live_server():
                         'keys_per_second': result['keys_per_second'],
                         'timestamp': time.strftime('%Y-%m-%d %H:%M:%S')
                     })
+            except Exception as e:
+                return jsonify({'error': str(e)})
+        
+        @app.route('/api/monitor-challenges')
+        def monitor_challenges():
+            try:
+                from core.simple_challenge_monitor import SimpleChallengeMonitor
+                
+                print("Starting Bitcoin challenge address monitoring...")
+                monitor = SimpleChallengeMonitor()
+                results = monitor.check_solved_addresses()
+                
+                addresses_with_balance = [r for r in results if r.get('has_balance', False)]
+                total_value = sum(r['current_balance_usd'] for r in addresses_with_balance)
+                
+                return jsonify({
+                    'monitor_status': 'completed',
+                    'total_addresses_checked': len(results),
+                    'addresses_with_balance': len(addresses_with_balance),
+                    'total_value_usd': total_value,
+                    'addresses_with_balance_details': addresses_with_balance,
+                    'notification_systems_tested': len(addresses_with_balance) > 0,
+                    'timestamp': time.strftime('%Y-%m-%d %H:%M:%S')
+                })
             except Exception as e:
                 return jsonify({'error': str(e)})
         
