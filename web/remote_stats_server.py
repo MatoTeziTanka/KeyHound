@@ -91,7 +91,14 @@ class RemoteStatsServer:
         def api_stats():
             """API endpoint for statistics."""
             self.total_requests += 1
-            return jsonify(self.get_current_stats())
+            stats = self.get_current_stats()
+            # Attach live throughput from worker logs if available
+            try:
+                throughput = self._aggregate_worker_throughput()
+                stats['throughput'] = throughput
+            except Exception as e:
+                stats['throughput'] = { 'error': str(e) }
+            return jsonify(stats)
         
         @self.app.route('/api/health')
         def api_health():
@@ -101,6 +108,23 @@ class RemoteStatsServer:
                 'timestamp': datetime.now().isoformat(),
                 'uptime': time.time() - self.start_time
             })
+
+        @self.app.route('/api/throughput')
+        def api_throughput_proxy():
+            """Proxy throughput from local throughput API (5051) to avoid cross-origin."""
+            try:
+                import urllib.request, json
+                with urllib.request.urlopen('http://127.0.0.1:5051/api/throughput', timeout=2) as resp:
+                    data = json.loads(resp.read().decode())
+                return jsonify(data)
+            except Exception as e:
+                return jsonify({'error': str(e)}), 502
+
+        @self.app.route('/api/throughput')
+        def api_throughput():
+            """Aggregate keys/sec from worker logs and return totals."""
+            self.total_requests += 1
+            return jsonify(self._aggregate_worker_throughput())
     
     def _register_socket_events(self):
         """Register SocketIO events."""
@@ -178,6 +202,43 @@ class RemoteStatsServer:
             'keyhound': keyhound_stats,
             'server': server_stats,
             'connection_status': 'connected' if self.connected_clients > 0 else 'waiting'
+        }
+
+    def _aggregate_worker_throughput(self) -> Dict[str, Any]:
+        """Parse run_worker_*.log files and aggregate keys/sec.
+
+        Expected log line pattern contains '(<number> keys/sec)'.
+        """
+        base = Path.cwd()
+        per_worker: Dict[str, float] = {}
+        total = 0.0
+        for log_path in sorted(base.glob('run_worker_*.log')):
+            try:
+                # Read last ~8KB to find recent line quickly
+                with open(log_path, 'rb') as f:
+                    f.seek(0, 2)
+                    size = f.tell()
+                    f.seek(max(0, size - 8192))
+                    tail = f.read().decode(errors='ignore')
+                lines = [ln for ln in tail.splitlines() if 'keys/sec' in ln]
+                if not lines:
+                    continue
+                last = lines[-1]
+                # Extract number before 'keys/sec' inside parentheses
+                import re
+                m = re.search(r'\(([,\d]+)\s+keys/sec\)', last)
+                if not m:
+                    continue
+                val = float(m.group(1).replace(',', ''))
+                per_worker[log_path.name] = val
+                total += val
+            except Exception:
+                # Skip problematic files but continue others
+                continue
+        return {
+            'total_keys_per_second': int(total),
+            'per_worker': per_worker,
+            'workers_count': len(per_worker)
         }
     
     def start_broadcast_loop(self):

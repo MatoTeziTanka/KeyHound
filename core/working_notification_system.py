@@ -29,8 +29,17 @@ class WorkingNotificationSystem:
         self.smtp_password = os.environ.get('SMTP_PASSWORD', '')
         
         # Recipients
-        self.admin_email = "sethpizzaboy@gmail.com"
-        self.friend_email = "ddeturk@gmail.com"
+        # Comma-separated list in ALERT_EMAILS env var overrides defaults
+        default_recipients = [
+            "sethpizzaboy@aol.com",
+            "sethpizzaboy@gmail.com",
+            "setsch0666@students.ecpi.edu",
+        ]
+        env_recipients = os.environ.get('ALERT_EMAILS', '')
+        if env_recipients.strip():
+            self.recipients = [e.strip() for e in env_recipients.split(',') if e.strip()]
+        else:
+            self.recipients = default_recipients
         
         # SMS configuration (Twilio)
         self.twilio_account_sid = os.environ.get('TWILIO_ACCOUNT_SID', '')
@@ -50,7 +59,12 @@ class WorkingNotificationSystem:
             return False
         
         if to_email is None:
-            to_email = self.admin_email
+            # Send to all configured recipients
+            results = []
+            for addr in self.recipients:
+                results.append(self.send_email_notification(subject, body, to_email=addr))
+            # If any succeeded, return True
+            return any(results)
         
         try:
             msg = MIMEMultipart()
@@ -181,8 +195,8 @@ KeyHound Enhanced Challenge Monitor
         
         # Send notifications
         results = {}
-        results['email'] = self.send_email_notification(subject, email_body, self.admin_email)
-        results['email_friend'] = self.send_email_notification(subject, email_body, self.friend_email)
+        # Send email to all configured recipients
+        results['email_all'] = self.send_email_notification(subject, email_body)
         results['sms'] = self.send_sms_notification(sms_message, self.admin_phone)
         results['webhook'] = self.send_webhook_notification(webhook_payload)
         
