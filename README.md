@@ -88,6 +88,19 @@ python3 web/remote_stats_server.py --host 0.0.0.0 --port 8080
 
 Operations runbook: see `OPERATIONS.md` for services, ports, backups, and reboot flow.
 
+### Monitoring
+
+- Dashboard: `http://<vm-ip>:5050`
+- Throughput API (JSON): `http://<vm-ip>:5051/api/throughput`
+- Health: `http://<vm-ip>:5050/api/health`
+
+These are provided by `keyhound-dashboard.service` (5050) and `keyhound-throughput.service` (5051).
+
+### Project Tracking
+
+All active/in-progress/todo work is tracked on the GitHub Project board:
+`https://github.com/users/MatoTeziTanka/projects/3`
+
 ## 🧭 Runbook (VM191)
 
 1) Start/stop solver workers
@@ -147,6 +160,7 @@ mkdir -p checkpoints
 # deployments/colab/KeyHound_Enhanced.ipynb
 # Expected performance: 20,000-100,000+ keys/second
 ```
+For Google Drive mount errors, see `deployments/colab/COLAB_QUICK_FIX.md`.
 
 ### Docker Deployment (Recommended for Production)
 ```bash
