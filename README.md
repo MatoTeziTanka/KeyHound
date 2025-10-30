@@ -1,7 +1,7 @@
 # 🔑 KeyHound Enhanced - Enterprise Bitcoin Cryptography Platform
 
 [![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)](https://github.com/sethpizzaboy/KeyHound)
-[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![License](https://img.shields.io/badge/license-Apache--2.0-green.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/python-3.8+-blue.svg)](https://python.org)
 
 **Professional, enterprise-grade Bitcoin cryptography and puzzle solving platform with optimal organization and deployment strategies.**
@@ -52,6 +52,93 @@ keyhound --puzzle 66 --gpu
 
 # Test brainwallet security
 keyhound --brainwallet-test
+```
+
+### CPU-only mode (current default)
+
+At present, GPU acceleration may be unavailable on some legacy GPUs (e.g., GRID K1/Kepler). You can run CPU-only mode reliably:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -e .
+
+# Minimal output, writes progress to run.log
+PYTHONWARNINGS=ignore python3 main.py --puzzle 66 --log-level WARNING > run.log 2>&1 &
+
+# Monitor progress
+tail -f run.log
+```
+
+When a supported NVIDIA GPU and driver are available, enable acceleration with:
+
+```bash
+python3 main.py --puzzle 66 --gpu --log-level INFO | tee run_gpu.log
+```
+
+### Dashboard and notifications
+
+Run a real-time dashboard (port 8080 by default):
+
+```bash
+pip install flask flask-socketio
+python3 web/remote_stats_server.py --host 0.0.0.0 --port 8080
+# Open http://<vm-ip>:8080
+```
+
+Operations runbook: see `OPERATIONS.md` for services, ports, backups, and reboot flow.
+
+## 🧭 Runbook (VM191)
+
+1) Start/stop solver workers
+```bash
+sudo systemctl enable --now keyhound-solver@1.service
+sudo systemctl enable --now keyhound-solver@2.service
+sudo systemctl enable --now keyhound-solver@3.service
+sudo systemctl enable --now keyhound-solver@4.service
+```
+2) Dashboard and throughput
+```bash
+sudo systemctl enable --now keyhound-dashboard.service
+sudo systemctl enable --now keyhound-throughput.service
+# Dashboard: http://<vm-ip>:5050  |  Throughput JSON: http://<vm-ip>:5051/api/throughput
+```
+3) Email alerts
+```bash
+export SMTP_PASSWORD='<gmail_app_password>'
+export ALERT_EMAILS='sethpizzaboy@aol.com,sethpizzaboy@gmail.com,setsch0666@students.ecpi.edu'
+```
+4) Checkpoints
+```bash
+sudo systemctl enable --now keyhound-checkpoint.timer
+sudo systemctl start keyhound-checkpoint.service  # manual
+```
+5) Reboot verification
+```bash
+systemctl --no-pager --type=service | egrep 'keyhound-(solver@|dashboard|throughput)'
+systemctl list-timers | grep keyhound
+curl -s http://127.0.0.1:5050/api/health
+```
+
+For packaging and service details, see `docs/PACKAGING.md`.
+
+Email alerts when a key/puzzle is found (uses Gmail SMTP account):
+
+```bash
+export SMTP_PASSWORD='<gmail_app_password_for_lightspeedup.smtp@gmail.com>'
+export ALERT_EMAILS='sethpizzaboy@aol.com,sethpizzaboy@gmail.com,setsch0666@students.ecpi.edu'
+# Notification system is invoked by the solver when an event is detected.
+# You can test delivery:
+python3 -c "from core.working_notification_system import WorkingNotificationSystem as W; W().send_email_notification('KeyHound test','This is a test')"
+```
+
+### Checkpointing (every 30–60 minutes)
+
+Persist logs and results periodically to survive power loss:
+
+```bash
+mkdir -p checkpoints
+(crontab -l 2>/dev/null; echo "*/30 * * * * cd $HOME/KeyHound && ts=\$(date +\%Y\%m\%d_\%H\%M); mkdir -p checkpoints/\$ts; cp -a run*.log results performance_metrics.db checkpoints/\$ts/ 2>/dev/null") | crontab -
 ```
 
 ### Google Colab (Recommended for Research)
@@ -170,7 +257,7 @@ pytest tests/performance/    # Performance tests
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the Apache-2.0 License - see the [LICENSE](LICENSE) file for details.
 
 ## ⚠️ Disclaimer
 
