@@ -76,6 +76,18 @@ When a supported NVIDIA GPU and driver are available, enable acceleration with:
 python3 main.py --puzzle 66 --gpu --log-level INFO | tee run_gpu.log
 ```
 
+### Default target selection
+
+By default, KeyHound auto-selects the first unsolved puzzle (skips known solved like 66). Override with `PUZZLE_BITS` env or `--puzzle`.
+
+```bash
+# Auto-select unsolved (default)
+PYTHONWARNINGS=ignore PYTHONPATH=. PUZZLE_BITS=auto python3 main.py --gpu --log-level INFO
+
+# Explicit 67-bit
+PYTHONWARNINGS=ignore PYTHONPATH=. PUZZLE_BITS=67 python3 main.py --gpu --log-level INFO
+```
+
 ### Dashboard and notifications
 
 Run a real-time dashboard (port 8080 by default):
