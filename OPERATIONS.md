@@ -1,7 +1,7 @@
 # KeyHound Operations
 
 ## Services (VM191 puzzle-keyhound)
-- keyhound-solver@1..4.service: CPU workers for Puzzle 66
+- keyhound-solver@1..4.service: CPU workers (defaults to first unsolved puzzle)
 - keyhound-dashboard.service: Remote stats (HTTP 5050)
 - keyhound-throughput.service: Throughput API (HTTP 5051)
 - keyhound-checkpoint.timer: Checkpoints every 30 minutes (runs keyhound-checkpoint.service)
@@ -14,6 +14,7 @@
 ## Environment
 - SMTP_PASSWORD: Gmail app password for lightspeedup.smtp@gmail.com
 - ALERT_EMAILS: comma-separated recipients
+- PUZZLE_BITS: optional; set to a specific bits value (e.g., 67). If unset or set to `auto`, KeyHound auto-selects the first unsolved target.
 
 ## Common commands
 ```bash
