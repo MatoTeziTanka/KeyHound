@@ -82,48 +82,105 @@ class SimpleKeyHound:
         if max_attempts is None:
             max_attempts = min(2 ** (bits - 10), 10000000)  # Reasonable limit
         
-        self.logger.info(f"Search range: {start_key} to {max_key}")
+        # Checkpoint setup
+        checkpoint_dir = Path("checkpoints")
+        checkpoint_dir.mkdir(exist_ok=True)
+        checkpoint_file = checkpoint_dir / f"puzzle_{bits}_checkpoint.json"
+        
+        # Load checkpoint if exists
+        last_key = start_key
+        total_attempts_before = 0
+        if checkpoint_file.exists():
+            try:
+                import json
+                with open(checkpoint_file, 'r') as f:
+                    checkpoint = json.load(f)
+                    last_key = checkpoint.get('last_key', start_key)
+                    total_attempts_before = checkpoint.get('total_attempts', 0)
+                    self.logger.info(f"Resuming from checkpoint: last_key={last_key:,}, total_attempts={total_attempts_before:,}")
+            except Exception as e:
+                self.logger.warning(f"Failed to load checkpoint: {e}, starting fresh")
+                last_key = start_key
+        
+        self.logger.info(f"Search range: {last_key:,} to {max_key:,}")
         self.logger.info(f"Max attempts: {max_attempts:,}")
         
         # Performance tracking
         start_time = time.time()
         keys_checked = 0
+        last_checkpoint_time = start_time
+        checkpoint_interval = 60  # Save checkpoint every 60 seconds
+        
+        # Initialize loop variables
+        current_key = last_key
+        total_attempts = total_attempts_before
+        
+        def save_checkpoint(key, attempts):
+            """Save checkpoint to file."""
+            try:
+                import json
+                checkpoint_data = {
+                    'last_key': key,
+                    'total_attempts': attempts,
+                    'timestamp': datetime.now().isoformat(),
+                    'puzzle_bits': bits,
+                    'target_address': target_address
+                }
+                with open(checkpoint_file, 'w') as f:
+                    json.dump(checkpoint_data, f, indent=2)
+                self.logger.debug(f"Checkpoint saved: key={key:,}, attempts={attempts:,}")
+            except Exception as e:
+                self.logger.warning(f"Failed to save checkpoint: {e}")
         
         try:
+            # Generate and check keys sequentially starting from last_key
+            
             # Generate and check keys
-            for i in range(max_attempts):
-                # Generate random private key in range
-                private_key_int = secrets.randbelow(max_key - start_key) + start_key
-                private_key = format(private_key_int, '064x')
+            while current_key < max_key and total_attempts < max_attempts:
+                # Generate private key from current integer
+                private_key = format(current_key, '064x')
                 
                 # Generate address
                 try:
                     public_key = self.bitcoin_crypto.private_key_to_public_key(private_key)
                     address = self.bitcoin_crypto.generate_bitcoin_address(private_key)
                     keys_checked += 1
+                    total_attempts += 1
+                    current_key += 1
                     
                     # Check if we found the target
                     if target_address and address == target_address:
                         elapsed = time.time() - start_time
                         self.logger.info(f"PUZZLE SOLVED! Found target address: {address}")
                         
+                        # Delete checkpoint on success
+                        if checkpoint_file.exists():
+                            checkpoint_file.unlink()
+                            self.logger.info("Checkpoint deleted after successful solve")
+                        
                         return {
                             'private_key': private_key,
                             'public_key': public_key,
                             'address': address,
                             'puzzle_bits': bits,
-                            'attempts': keys_checked,
+                            'attempts': total_attempts,
                             'time_elapsed': elapsed,
                             'keys_per_second': keys_checked / elapsed if elapsed > 0 else 0,
                             'timestamp': datetime.now().isoformat(),
                             'solved': True
                         }
                     
-                    # Progress reporting
-                    if keys_checked % 100000 == 0:
+                    # Progress reporting and checkpointing
+                    if keys_checked % 10000 == 0:
                         elapsed = time.time() - start_time
                         rate = keys_checked / elapsed if elapsed > 0 else 0
-                        self.logger.info(f"Checked {keys_checked:,} keys ({rate:.0f} keys/sec)")
+                        self.logger.info(f"Progress: {total_attempts:,} attempts ({rate:.0f} keys/sec) - {elapsed:.1f}s")
+                    
+                    # Periodic checkpoint save
+                    current_time = time.time()
+                    if current_time - last_checkpoint_time >= checkpoint_interval:
+                        save_checkpoint(current_key, total_attempts)
+                        last_checkpoint_time = current_time
                     
                     # Timeout check
                     if time.time() - start_time > timeout:
@@ -132,39 +189,50 @@ class SimpleKeyHound:
                 
                 except Exception as e:
                     self.logger.debug(f"Error generating key: {e}")
+                    current_key += 1  # Skip invalid key and continue
                     continue
+            
+            # Save final checkpoint before exit
+            save_checkpoint(current_key, total_attempts)
             
             # Puzzle not solved
             elapsed = time.time() - start_time
-            self.logger.info(f"Puzzle not solved after {keys_checked:,} attempts")
+            self.logger.info(f"Puzzle not solved after {total_attempts:,} attempts (resumed from {total_attempts_before:,})")
             
             return {
                 'private_key': None,
                 'public_key': None,
                 'address': None,
                 'puzzle_bits': bits,
-                'attempts': keys_checked,
+                'attempts': total_attempts,
                 'time_elapsed': elapsed,
                 'keys_per_second': keys_checked / elapsed if elapsed > 0 else 0,
                 'timestamp': datetime.now().isoformat(),
-                'solved': False
+                'solved': False,
+                'checkpoint_saved': True,
+                'last_key': current_key
             }
         
         except KeyboardInterrupt:
             self.logger.info("Puzzle solving interrupted by user")
             elapsed = time.time() - start_time
             
+            # Save checkpoint on interrupt
+            save_checkpoint(current_key, total_attempts)
+            
             return {
                 'private_key': None,
                 'public_key': None,
                 'address': None,
                 'puzzle_bits': bits,
-                'attempts': keys_checked,
+                'attempts': total_attempts,
                 'time_elapsed': elapsed,
                 'keys_per_second': keys_checked / elapsed if elapsed > 0 else 0,
                 'timestamp': datetime.now().isoformat(),
                 'solved': False,
-                'interrupted': True
+                'interrupted': True,
+                'checkpoint_saved': True,
+                'last_key': current_key
             }
     
     def test_brainwallet_security(self, patterns=None, max_attempts=100000):
