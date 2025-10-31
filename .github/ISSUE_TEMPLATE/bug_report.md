@@ -1,55 +1,41 @@
 ---
 name: Bug Report
-about: Create a report to help us improve KeyHound Enhanced
+about: Report a bug or unexpected behavior
 title: '[BUG] '
-labels: 'type: bug, priority: medium'
+labels: bug
 assignees: ''
 
 ---
 
-## 🐛 Bug Report
+## 🐛 Bug Description
+<!-- A clear and concise description of what the bug is -->
 
-### **Describe the Bug**
-A clear and concise description of what the bug is.
+## 📋 Steps to Reproduce
+1. 
+2. 
+3. 
 
-### **To Reproduce**
-Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
+## ✅ Expected Behavior
+<!-- What you expected to happen -->
 
-### **Expected Behavior**
-A clear and concise description of what you expected to happen.
+## ❌ Actual Behavior
+<!-- What actually happened -->
 
-### **Screenshots**
-If applicable, add screenshots to help explain your problem.
+## 📊 Environment
+**KeyHound Version:** <!-- e.g., V1.1.0 -->  
+**Deployment:** <!-- VM191 / Colab / Docker / Local -->  
+**OS:** <!-- e.g., Ubuntu 24.04 -->  
+**Python Version:** <!-- e.g., 3.12.3 -->  
+**GPU:** <!-- if applicable, e.g., NVIDIA T4 / None (CPU-only) -->
 
-### **Environment**
-- **OS**: [e.g. Windows 10, Ubuntu 20.04, macOS 12]
-- **Python Version**: [e.g. 3.9, 3.10, 3.11]
-- **KeyHound Version**: [e.g. 1.0.0]
-- **Browser**: [e.g. chrome, safari] (if web interface)
-
-### **Error Logs**
+## 📝 Logs
+<!-- Paste relevant logs here -->
 ```
-Paste any error messages or logs here
+# Paste logs here
 ```
 
-### **Additional Context**
-Add any other context about the problem here.
+## 🔍 Additional Context
+<!-- Any other context about the problem -->
 
-### **Component**
-- [ ] Core functionality
-- [ ] GPU acceleration
-- [ ] Web interface
-- [ ] Machine learning
-- [ ] Distributed computing
-- [ ] Deployment
-- [ ] Documentation
-
-### **Priority**
-- [ ] Critical (blocks functionality)
-- [ ] High (major impact)
-- [ ] Medium (minor impact)
-- [ ] Low (cosmetic)
+## 💡 Possible Solution
+<!-- If you have suggestions on how to fix the bug -->

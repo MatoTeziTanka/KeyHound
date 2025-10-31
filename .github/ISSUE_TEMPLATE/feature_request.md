@@ -1,63 +1,40 @@
 ---
 name: Feature Request
-about: Suggest an idea for KeyHound Enhanced
+about: Suggest a new feature or enhancement
 title: '[FEATURE] '
-labels: 'type: enhancement, priority: medium'
+labels: enhancement
 assignees: ''
 
 ---
 
-## 🚀 Feature Request
+## 🚀 Feature Description
+<!-- A clear and concise description of the feature you'd like -->
 
-### **Is your feature request related to a problem? Please describe.**
-A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
+## 💡 Motivation
+<!-- Why is this feature needed? What problem does it solve? -->
 
-### **Describe the solution you'd like**
-A clear and concise description of what you want to happen.
+## 📝 Proposed Solution
+<!-- How would you like this feature to work? -->
 
-### **Describe alternatives you've considered**
-A clear and concise description of any alternative solutions or features you've considered.
+## 🔄 Alternatives Considered
+<!-- What other approaches have you thought about? -->
 
-### **Use Case**
-Describe the specific use case for this feature:
-- **Who**: Target users
-- **What**: What they want to accomplish
-- **When**: When this feature would be used
-- **Why**: Why this feature is important
+## 📊 Use Case
+<!-- Describe a specific scenario where this feature would be useful -->
 
-### **Component**
-- [ ] Core functionality
-- [ ] GPU acceleration
-- [ ] Web interface
-- [ ] Machine learning
-- [ ] Distributed computing
-- [ ] Deployment
-- [ ] Documentation
-- [ ] Performance optimization
+## 🎯 Acceptance Criteria
+<!-- What would make this feature complete? -->
+- [ ] 
+- [ ] 
+- [ ] 
 
-### **Priority**
-- [ ] Critical (essential functionality)
-- [ ] High (major improvement)
-- [ ] Medium (nice to have)
-- [ ] Low (future enhancement)
+## 📈 Impact
+**Priority:** <!-- Low / Medium / High / Critical -->  
+**Effort Estimate:** <!-- Small / Medium / Large -->  
+**Target Version:** <!-- e.g., V1.3.0 -->
 
-### **Implementation Considerations**
-- **Complexity**: [Low/Medium/High]
-- **Effort**: [Small/Medium/Large]
-- **Dependencies**: List any dependencies
-- **Breaking Changes**: [Yes/No]
+## 🔗 Related Issues
+<!-- Link to related issues or PRs -->
 
-### **Additional Context**
-Add any other context or screenshots about the feature request here.
-
-### **Acceptance Criteria**
-- [ ] Criterion 1
-- [ ] Criterion 2
-- [ ] Criterion 3
-
-### **Definition of Done**
-- [ ] Feature implemented
-- [ ] Tests written and passing
-- [ ] Documentation updated
-- [ ] Performance impact assessed
-- [ ] Security review completed
+## 📸 Mockups / Examples
+<!-- If applicable, add screenshots, diagrams, or code examples -->
