@@ -19,3 +19,6 @@ Policy
 
 
 \n- Archived GSMG solver moved from root to EOL/gsmg_puzzle_solver.py (2025-10-30). Use GSMG.IO repo for active work; future integration via --gsmg planned.
+
+
+

@@ -23,3 +23,6 @@ python3 main.py --puzzle 66 --gpu --log-level INFO | tee run_gpu.log
 ```
 
 
+
+
+
