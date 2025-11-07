@@ -48,3 +48,6 @@ sudo ufw allow 5051/tcp
 ## Backups / checkpoints
 - Automatic via `keyhound-checkpoint.timer` to `~/KeyHound/checkpoints/`.
 - Manual trigger: `sudo systemctl start keyhound-checkpoint.service`.
+
+
+
