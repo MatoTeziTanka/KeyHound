@@ -1,0 +1,8 @@
+{
+  "recommendations": [
+    // Python Development
+    "ms-python.python",
+    // General/Git
+    "eamodio.gitlens"
+  ]
+}
